@@ -1,0 +1,269 @@
+/* src/main/resources/css/application.css */
+
+/* .root selectoru genellikle sahnenin veya ana layout'un tamamını hedefler. */
+/* MainDashboard.fxml'de kök element VBox olduğu için bu stil o VBox'a uygulanır. */
+.root {
+    -fx-background-color: #f0f0f0; /* Çok açık gri bir arka plan rengi */
+    -fx-font-family: "Arial", sans-serif; /* Varsayılan yazı tipi */
+}
+
+/* Genel başlıklar için (isteğe bağlı, FXML'de styleClass="label-title" eklenebilir) */
+.label-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+/* Sekme Paneli Stilleri */
+.tab-pane {
+    -fx-tab-min-width: 100px; /* Sekme minimum genişliği */
+    -fx-tab-max-width: 200px; /* Sekme maksimum genişliği */
+    -fx-tab-min-height: 30px; /* Sekme minimum yüksekliği */
+    -fx-tab-max-height: 40px; /* Sekme maksimum yüksekliği */
+    -fx-header-background: #cccccc; /* Sekme başlıklarının arka planı */
+}
+
+/* Seçili sekme başlığı */
+.tab:selected {
+    -fx-background-color: #007bff; /* Mavi arka plan */
+    -fx-text-fill: white; /* Beyaz yazı rengi */
+}
+
+/* Seçili olmayan sekmelerin başlıkları */
+.tab {
+    -fx-background-color: #e9e9e9; /* Açık gri arka plan */
+    -fx-text-fill: #333333; /* Koyu gri yazı rengi */
+    -fx-background-insets: 0, 1 1 0 0; /* Sekmeler arasında çizgi efekti */
+}
+
+/* Sekme başlığı üzerine gelindiğinde (hover) */
+.tab:hover {
+    -fx-background-color: #dcdcdc; /* Biraz daha koyu gri */
+}
+
+/* Sekme içeriği alanı (seçili sekmenin altındaki büyük boşluk) */
+.tab-content {
+    -fx-padding: 10px; /* İç boşluk */
+    -fx-background-color: #ffffff; /* Beyaz arka plan */
+}
+
+/* Tablo Stilleri (my_appointments_view.fxml'deki TableView için) */
+/* Eğer sadece MyAppointmentsView.fxml'deki tabloyu etkilemek istersen, o FXML'e özel CSS yazabilirsin. */
+/* Bu stiller TabPane içindeki herhangi bir TableView'ı etkiler. */
+.table-view {
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Tablo sütun başlıkları alanı */
+.table-view .column-header-background {
+    -fx-background-color: #007bff; /* Mavi başlık arka planı */
+    -fx-padding: 5px;
+}
+
+/* Tablo sütun başlıklarındaki yazılar */
+.table-view .column-header .label {
+    -fx-text-fill: white; /* Beyaz yazı */
+    -fx-font-weight: bold;
+}
+
+/* Tablo satırları */
+.table-row-cell {
+    -fx-background-color: white; /* Varsayılan satır arka planı */
+    -fx-cell-size: 35px; /* Satır yüksekliği */
+    -fx-border-color: transparent; /* Satırlar arası çizgi (şeffaf) */
+    -fx-border-width: 0 0 1 0; /* Sadece altına çizgi koy */
+    -fx-border-color: #eeeeee; /* Çizgi rengi */
+}
+
+/* Tek sayılı (odd) satırlar */
+.table-row-cell:odd {
+    -fx-background-color: #f8f8f8; /* Hafif gri */
+}
+
+/* Tablo satırına üzerine gelindiğinde (hover) */
+.table-row-cell:hover {
+    -fx-background-color: #e0e0e0; /* Üzerine gelince grileşsin */
+}
+
+/* Seçili tablo satırı */
+.table-row-cell:selected {
+    -fx-background-color: #bfe0ff; /* Açık mavi */
+}
+
+/* Tablo hücreleri (isteğe bağlı, genellikle varsayılan yeterli) */
+/*
+.table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
+}
+*/
+
+/* Scroll Bar stilleri */
+.scroll-bar {
+    -fx-background-color: #e0e0e0;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #cccccc;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #aaaaaa;
+}
+
+/* Text Alanları, Password Alanları, ComboBox gibi Form Elementleri */
+/* Genel stil, login.css'deki özel stiller bunu override edebilir */
+.text-field, .password-field, .combo-box, .date-picker {
+    -fx-font-size: 14px;
+    -fx-padding: 8;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.text-field:focused, .password-field:focused, .combo-box:focused, .date-picker:focused {
+    -fx-border-color: #007bff;
+}
+
+/* Buton Stilleri (Genel), login.css'deki özel buton stilleri bunu override edebilir */
+.button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 15 8 15;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* Styles specific to the Profile View (profile_view.fxml) */
+
+/* .profile-container styleClass'ına sahip VBox için stil */
+.profile-container {
+    -fx-padding: 15px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+/* Styles for the detail labels within the profile container (explicitly by ID) */
+/* :not(...) selectoru yerine ID'leri listeleyerek belirttik */
+#usernameLabel,
+#nameLabel,
+#surnameLabel,
+#userTypeLabel,
+#phoneNumberLabel,
+#emailLabel,
+#dateOfBirthLabel,
+#bloodGroupLabel,
+#specializationLabel {
+    -fx-padding: 5 0 5 0;
+    -fx-font-size: 15px;
+    -fx-text-fill: #333333;
+}
+
+
+/* Style for the main profile title label (fx:id="welcomeProfileLabel") */
+#welcomeProfileLabel {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #003366;
+    -fx-padding: 0 0 20 0;
+}
+
+/* Hasta ve Doktor özel detay başlık Labelları için stil (fx:id'leri kullanıldı) */
+#patientDetailsTitleLabel, #doctorDetailsTitleLabel {
+    -fx-font-size: 18px; /* Boyutu biraz büyütelim, ana başlıktan küçük kalsın */
+    -fx-font-weight: bold;
+    -fx-text-fill: #0056b3;
+    -fx-padding: 15 0 5 0;
+}
+/* src/main/resources/css/application.css */
+
+/* ... (Mevcut genel stiller ve Profil ekranı stilleri) ... */
+
+/* Styles specific to the Create Appointment View (CreateAppointment.fxml) */
+
+/* .create-appointment-container styleClass'ına sahip VBox için stil */
+.create-appointment-container {
+    -fx-padding: 15px;
+    -fx-background-color: #ffffff; /* Beyaz arka plan */
+    -fx-border-color: #cccccc; /* Çerçeve rengi */
+    -fx-border-width: 1; /* Çerçeve kalınlığı */
+    -fx-border-radius: 5; /* Köşe yuvarlaklığı */
+    -fx-background-radius: 5; /* Arka plan köşe yuvarlaklığı */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2); /* Hafif gölge efekti */
+}
+
+/* .create-appointment-container içindeki tüm Label'lar için genel stil */
+.create-appointment-container .label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+/* Randevu Oluştur Ekranı Başlık Labelı için stil */
+/* create-appointment-container içindeki ilk Label'ı seçiyoruz */
+.create-appointment-container .label:first-child {
+    -fx-font-size: 20px; /* Daha büyük yazı boyutu */
+    -fx-font-weight: bold; /* Kalın yazı */
+    -fx-text-fill: #003366; /* Koyu mavi renk */
+    -fx-padding: 0 0 10 0; /* Alttan boşluk */
+}
+
+/* Form input elementleri (ComboBox, DatePicker) stilleri */
+/* Genel stiller application.css'de tanımlı ama burada daha spesifik hale getirebiliriz */
+.create-appointment-container .combo-box,
+.create-appointment-container .date-picker {
+    -fx-font-size: 14px;
+    -fx-padding: 5; /* İç boşluğu biraz azalt */
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Form input elementlerine odaklanıldığında (focus) stil */
+.create-appointment-container .combo-box:focused,
+.create-appointment-container .date-picker:focused {
+    -fx-border-color: #007bff; /* Mavi çerçeve */
+}
+
+/* Randevu Oluştur Butonu stilleri */
+/* Genel .button stilleri zaten uygulanıyor, özel bir stil gerekirse buraya eklenebilir */
+.create-appointment-container .button {
+    /* Örneğin sadece bu butona farklı bir renk vermek istersen: -fx-background-color: #28a745; */
+}
+
+/* Müsait Saatler Yükleniyor Labelı için stil */
+#loadingTimeSlotsLabel {
+    -fx-text-fill: #555555; /* Gri renk */
+    -fx-font-style: italic; /* İtalik yazı */
+}
+
+/* Mesaj Labelı (Hata veya Başarı Mesajları) stilleri */
+/* #messageLabel ID'si login.css'de de var, specificity kurallarına göre hangisi kazanır duruma göre değişir */
+/* Buraya daha spesifik kurallar yazılabilir */
+/*
+#messageLabel {
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+}
+*/
+
+/* Doktorlar için Randevu Oluşturmanın Devre Dışı Olduğunu Gösteren Label stil */
+#doctorMessageLabel {
+    -fx-font-size: 16px; /* Biraz daha büyük yazı */
+    -fx-font-weight: bold; /* Kalın yazı */
+    -fx-text-fill: #dc3545; /* Kırmızı renk */
+    -fx-padding: 20 0 0 0; /* Üstten boşluk */
+}

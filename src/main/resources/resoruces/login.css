@@ -1,0 +1,73 @@
+/* src/main/resources/css/login.css */
+
+/* .root selectoru genellikle sahnenin veya kök layout'un tamamını hedefler. */
+/* Senin LoginUI.fxml dosyannda kök element VBox olduğu için bu stil o VBox'a uygulanır. */
+.root {
+    -fx-background-color: #e0e0e0; /* Açık gri bir arka plan rengi */
+}
+
+/* VBox gibi container stilleri */
+/* Senin LoginUI.fxml dosyannda kök element VBox olduğu için bu stil de uygulanır */
+.vbox {
+    -fx-spacing: 15; /* Çocuk elemanlar arası boşluk */
+    -fx-padding: 20; /* İç kenar boşluğu */
+    -fx-background-color: #ffffff; /* Beyaz arka plan */
+    -fx-border-color: #cccccc; /* Gri çerçeve rengi */
+    -fx-border-width: 1; /* Çerçeve kalınlığı */
+    -fx-border-radius: 5; /* Köşe yuvarlaklığı */
+    -fx-background-radius: 5; /* Arka plan köşe yuvarlaklığı */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5); /* Hafif gölge efekti */
+}
+
+/* Başlık Label (LoginUI.fxml'deki fx:id="loginTitleLabel" ile eşleşirse) */
+#loginTitleLabel {
+    -fx-font-size: 24px; /* Yazı boyutu */
+    -fx-font-weight: bold; /* Kalın yazı */
+    -fx-text-fill: #333333; /* Koyu gri yazı rengi */
+    -fx-padding: 0 0 10 0; /* Alttan boşluk */
+}
+
+/* Genel Label stilleri */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555555; /* Orta gri yazı rengi */
+}
+
+/* Button stilleri */
+.button {
+    -fx-background-color: #007bff; /* Mavi renk */
+    -fx-text-fill: white; /* Beyaz yazı rengi */
+    -fx-font-size: 14px;
+    -fx-padding: 10 20 10 20; /* İç boşluk (üst, sağ, alt, sol) */
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand; /* Fare imleci el şeklini alır */
+}
+
+/* Butonun üzerine gelindiğinde (hover) stil */
+.button:hover {
+    -fx-background-color: #0056b3; /* Daha koyu mavi */
+}
+
+/* Hata mesajı Label (LoginUI.fxml'deki fx:id="messageLabel" ile eşleşir) */
+#messageLabel { // <<<< BURASI DÜZELTİLDİ
+-fx-text-fill: #dc3545; /* Kırmızı */
+    -fx-font-weight: bold;
+}
+
+/* Text alanları (TextField, PasswordField) stilleri */
+.text-field, .password-field {
+    -fx-font-size: 14px;
+    -fx-padding: 10;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-prompt-text-fill: #888888; /* Prompt text rengi */
+}
+
+/* Text alanına odaklanıldığında (focus) stil */
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #007bff; /* Mavi çerçeve */
+    -fx-faint-focus-color: transparent; /* Focus rengini şeffaf yap */
+    -fx-focus-color: transparent; /* Focus rengini şeffaf yap */
+}
