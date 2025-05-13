@@ -1,0 +1,87 @@
+/* src/main/resources/css/login.css */
+
+/* Arka plan rengi ve modern font ailesi tanımları */
+.root {
+    -fx-background-color: #f0f5fa; /* Daha soft mavi tonlu arka plan */
+    -fx-font-family: 'Poppins', 'Montserrat', 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* VBox gibi container stilleri */
+.vbox {
+    -fx-spacing: 18; /* Biraz daha ferah boşluk */
+    -fx-padding: 30; /* Daha geniş iç boşluk */
+    -fx-background-color: #ffffff; /* Beyaz arka plan */
+    -fx-border-color: #e0e0e0; /* Çok hafif gri çerçeve */
+    -fx-border-width: 1;
+    -fx-border-radius: 12; /* Daha modern köşe yuvarlaklığı */
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0, 0, 4); /* Daha yumuşak gölge */
+}
+
+/* Başlık Label */
+#loginTitleLabel {
+    -fx-font-size: 28px; /* Daha büyük başlık */
+    -fx-font-weight: 600; /* Semi-bold */
+    -fx-text-fill: #36485b; /* Daha yumuşak koyu mavi-gri tonu */
+    -fx-padding: 0 0 15 0; /* Daha fazla alttan boşluk */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 1, 0, 0, 1); /* Hafif metin gölgesi */
+}
+
+/* Genel Label stilleri */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #505c6e; /* Daha sıcak bir gri tonu */
+    -fx-font-weight: normal;
+}
+
+/* Button stilleri */
+.button {
+    -fx-background-color: #4dabca; /* Daha yumuşak mavi tonu */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600; /* Semi-bold */
+    -fx-padding: 12 25 12 25; /* Daha büyük buton */
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1); /* Hafif buton gölgesi */
+}
+
+/* Butonun üzerine gelindiğinde (hover) stil */
+.button:hover {
+    -fx-background-color: #3d99b8; /* Daha koyu mavi */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0, 0, 2); /* Hover durumunda daha belirgin gölge */
+}
+
+/* Basıldığında buton efekti */
+.button:pressed {
+    -fx-background-color: #2c7f9b; /* Daha koyu basılı renk */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1); /* Daha az gölge */
+}
+
+/* Hata mesajı Label */
+#messageLabel {
+    -fx-text-fill: #e74c3c; /* Daha modern kırmızı tonu */
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+/* Text alanları (TextField, PasswordField) stilleri */
+.text-field, .password-field {
+    -fx-font-size: 15px;
+    -fx-padding: 12;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: #f8f9fa; /* Hafif gri arka plan */
+    -fx-prompt-text-fill: #adb5bd; /* Daha açık gri placeholder */
+}
+
+/* Text alanına odaklanıldığında (focus) stil */
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #4dabca; /* Yumuşak mavi kenarlık */
+    -fx-background-color: #ffffff; /* Beyaz arka plan */
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(77,171,202,0.1), 4, 0, 0, 0); /* Hafif mavi gölge */
+}

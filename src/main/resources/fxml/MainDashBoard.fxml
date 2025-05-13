@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import java.net.URL?>
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainDashboardController">
+    <stylesheets>
+        <URL value="@/resoruces/application.css" /> </stylesheets>
+    <children>
+        <Label fx:id="welcomeLabel" alignment="CENTER" prefHeight="50.0" prefWidth="800.0" text="Hoş Geldiniz!">
+            <font>
+                <Font name="System Bold" size="28.0" />
+            </font>
+        </Label>
+        <AnchorPane prefHeight="30.0" prefWidth="800.0">
+            <children>
+                <Button layoutX="700.0" layoutY="0.0" mnemonicParsing="false" onAction="#handleLogout" text="Çıkış Yap" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
+            </children>
+        </AnchorPane>
+        <TabPane fx:id="dashboardTabPane" prefHeight="550.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Profil">
+                    <content>
+                        <fx:include source="ProfileView.fxml" fx:id="profileInclude" />
+                    </content>
+                </Tab>
+                <Tab text="Randevularım">
+                    <content>
+                        <fx:include fx:id="myAppointmentsInclude" source="MyAppointmentsView.fxml" />
+                    </content>
+                </Tab>
+                <Tab text="Randevu Oluştur / Yönet">
+                    <content>
+                        <fx:include fx:id="createAppointmentInclude" source="CreateAppointment.fxml" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>
