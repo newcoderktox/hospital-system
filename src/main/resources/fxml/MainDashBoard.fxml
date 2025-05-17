@@ -29,7 +29,7 @@
                         <fx:include source="ProfileView.fxml" fx:id="profileInclude" />
                     </content>
                 </Tab>
-                <Tab text="Randevularım">
+                <Tab text="Randevular">
                     <content>
                         <fx:include fx:id="myAppointmentsInclude" source="MyAppointmentsView.fxml" />
                     </content>
