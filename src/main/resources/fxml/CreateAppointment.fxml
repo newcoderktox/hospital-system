@@ -21,27 +21,27 @@
         <VBox spacing="10.0">
             <children>
                 <Label text="Doktor Seçin:" />
-                <ComboBox fx:id="doctorComboBox" prefWidth="200.0" promptText="Doktor Seçin" />
+                <ComboBox fx:id="docCombo" prefWidth="200.0" promptText="Doktor Seçin" />
 
                 <Label text="Tarih Seçin:" />
-                <DatePicker fx:id="datePicker" promptText="Tarih Seçin" />
+                <DatePicker fx:id="datePick" promptText="Tarih Seçin" />
 
                 <Label text="Saat Seçin:" />
-                <ComboBox fx:id="timeComboBox" prefWidth="200.0" promptText="Saat Seçin" />
+                <ComboBox fx:id="timeCombo" prefWidth="200.0" promptText="Saat Seçin" />
             </children>
         </VBox>
 
-        <Label fx:id="loadingTimeSlotsLabel" text="Müsait saatler yükleniyor..." visible="false">
+        <Label fx:id="loadingMsg" text="Müsait saatler yükleniyor..." visible="false">
             <font>
                 <Font size="11.0" />
             </font>
         </Label>
 
-        <Button fx:id="createAppointmentButton" mnemonicParsing="false" onAction="#handleCreateAppointment" text="Randevu Oluştur" disable="true" />
+        <Button fx:id="createBtn" mnemonicParsing="false" onAction="#createAppointment" text="Randevu Oluştur" disable="true" />
 
-        <Label fx:id="messageLabel" textFill="RED" wrapText="true" />
+        <Label fx:id="msgLabel" textFill="RED" wrapText="true" />
 
-        <Label fx:id="doctorMessageLabel" text="Sadece hastalar randevu oluşturabilir." textFill="#dc3545" visible="false">
+        <Label fx:id="docMsgLabel" text="Sadece hastalar randevu oluşturabilir." textFill="#dc3545" visible="false">
             <font>
                 <Font size="14.0" />
             </font>

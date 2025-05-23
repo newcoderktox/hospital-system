@@ -1,4 +1,3 @@
-// src/main/java/database/Database.java
 package database;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -7,42 +6,36 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Database {
-    // Veritabanı dosyasının yolu. "src/main/resources/" altına koyabiliriz.
-    // IDE'den veya Maven ile çalıştırıldığında, bu yol projenin root dizinine göre ayarlanır.
-    private static final String DATABASE_URL = "jdbc:sqlite:hospital_appointment_system.db";
 
-    // Veritabanı bağlantısını dönecek metod
+    //db file
+    private static final String DB_URL = "jdbc:sqlite:hospital_appointment_system.db";
+    //make db connection
     public static Connection connect() {
-        Connection conn = null;
+        Connection myCon = null; //connection object
         try {
+            //load sqlite driver
             Class.forName("org.sqlite.JDBC");
-
-            // **BURAYI EKLE**
-            // Veritabanı dosyasının mutlak yolunu konsola yazdır
-            String currentDir = Paths.get(".").toAbsolutePath().normalize().toString();
-            String dbAbsolutePath = Paths.get(currentDir, "hospital_appointment_system.db").normalize().toString();
-            System.out.println("DEBUG: Veritabanına bağlanılmaya çalışılıyor: " + dbAbsolutePath);
-            // **EKLEME SONU**
-
-            conn = DriverManager.getConnection(DATABASE_URL);
-            System.out.println("Veritabanına başarıyla bağlandı.");
+            //this part is to find the db file where program runs
+            String currentFolder = Paths.get(".").toAbsolutePath().normalize().toString();
+            String fullDbPath = Paths.get(currentFolder, "hospital_appointment_system.db").normalize().toString();
+            System.out.println("DEBUG: trying to connect db at " + fullDbPath);
+            myCon = DriverManager.getConnection(DB_URL); //connect to db
+            System.out.println("db connected ok");
         } catch (ClassNotFoundException e) {
-            System.err.println("SQLite JDBC sürücüsü bulunamadı: " + e.getMessage());
-        e.printStackTrace();
+            System.err.println("ERROR: sqlite driver not found " + e.getMessage());
+            e.printStackTrace();
         } catch (SQLException e) {
-            System.err.println("Veritabanı bağlantı hatası: " + e.getMessage());
-            e.printStackTrace(); // Hata detaylarını daha fazla görmek için
+            System.err.println("ERROR: db connection prob " + e.getMessage());
+            e.printStackTrace();
         }
-        return conn;
+        return myCon; //return the connection
     }
-
-    // Gerekli tabloları oluşturan metod
-    public static void createTables() {
-        try (Connection conn = connect();
-             Statement stmt = conn.createStatement()) {
-
-            // Kullanıcılar Tablosu (Doktorlar ve Hastalar için genel bilgiler)
-            String usersSql = "CREATE TABLE IF NOT EXISTS users (" +
+    //make or check tables
+    public static void setupTables() {
+        try (Connection myCon = connect(); //get conn
+             Statement myStmt = myCon.createStatement()) { //sql query
+            //users table sql
+            String usersTableSql = "CREATE TABLE IF NOT EXISTS users (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "username TEXT NOT NULL UNIQUE," +
                     "password TEXT NOT NULL," +
@@ -50,69 +43,60 @@ public class Database {
                     "surname TEXT NOT NULL," +
                     "phoneNumber TEXT," +
                     "email TEXT," +
-                    "userType TEXT NOT NULL" + // 'Doctor' veya 'Patient'
+                    "userType TEXT NOT NULL" +
                     ");";
-            stmt.execute(usersSql);
-            System.out.println("users tablosu oluşturuldu veya zaten mevcuttu.");
-
-            // Doktorlar Tablosu (Doktorlara özgü bilgiler)
-            String doctorsSql = "CREATE TABLE IF NOT EXISTS doctors (" +
+            myStmt.execute(usersTableSql); //run sql
+            System.out.println("users table done or already exists");
+            //doctors table sql
+            String doctorsTableSql = "CREATE TABLE IF NOT EXISTS doctors (" +
                     "id INTEGER PRIMARY KEY," +
                     "specialization TEXT NOT NULL," +
                     "FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE" +
                     ");";
-            stmt.execute(doctorsSql);
-            System.out.println("doctors tablosu oluşturuldu veya zaten mevcuttu.");
-
-            // Hastalar Tablosu (Hastalara özgü bilgiler)
-            String patientsSql = "CREATE TABLE IF NOT EXISTS patients (" +
+            myStmt.execute(doctorsTableSql); //run sql
+            System.out.println("doctors table done or already exists");
+            //patients table sql
+            String patientsTableSql = "CREATE TABLE IF NOT EXISTS patients (" +
                     "id INTEGER PRIMARY KEY," +
                     "dateOfBirth TEXT," +
                     "bloodGroup TEXT," +
                     "FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE" +
                     ");";
-            stmt.execute(patientsSql);
-            System.out.println("patients tablosu oluşturuldu veya zaten mevcuttu.");
-
-            // Randevular Tablosu
-            String appointmentsSql = "CREATE TABLE IF NOT EXISTS appointments (" +
+            myStmt.execute(patientsTableSql); // run sql
+            System.out.println("patients table done or already exists");
+            //appointments table sql
+            String apptsTableSql = "CREATE TABLE IF NOT EXISTS appointments (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "patient_id INTEGER NOT NULL," +
                     "doctor_id INTEGER NOT NULL," +
-                    "appointment_date TEXT NOT NULL," + // YYYY-MM-DD formatında
-                    "appointment_time TEXT NOT NULL," + // HH:MM formatında
-                    "status TEXT NOT NULL," + // 'Scheduled', 'Completed', 'Cancelled' gibi
+                    "appointment_date TEXT NOT NULL," +
+                    "appointment_time TEXT NOT NULL," +
+                    "status TEXT NOT NULL," +
                     "FOREIGN KEY (patient_id) REFERENCES users(id) ON DELETE CASCADE," +
                     "FOREIGN KEY (doctor_id) REFERENCES users(id) ON DELETE CASCADE" +
                     ");";
-            stmt.execute(appointmentsSql);
-            System.out.println("appointments tablosu oluşturuldu veya zaten mevcuttu.");
-
-            System.out.println("Tüm tablolar başarıyla oluşturuldu veya güncellendi.");
-
+            myStmt.execute(apptsTableSql); //run sql
+            System.out.println("appts tablealready exists");
+            System.out.println("all table updated");
         } catch (SQLException e) {
-            System.err.println("Veritabanı tablo oluşturma hatası: " + e.getMessage());
+            System.err.println("ERROR: db table problem " + e.getMessage());
         }
     }
-
-    // Bağlantıyı kapatmak için yardımcı metod (try-with-resources kullanıldığı için genellikle gerekmez)
-    public static void closeConnection(Connection conn) {
-        if (conn != null) {
+    //close connection
+    public static void closeMyCon(Connection dbCon) {
+        if (dbCon != null) {
             try {
-                conn.close();
-                System.out.println("Veritabanı bağlantısı kapatıldı.");
+                dbCon.close(); //close connection
+                System.out.println("db connection closed");
             } catch (SQLException e) {
-                System.err.println("Veritabanı bağlantısını kapatma hatası: " + e.getMessage());
+                System.err.println("ERROR: db close problem " + e.getMessage());
             }
         }
     }
 
     public static void main(String[] args) {
-        // Uygulama başladığında tabloların oluşturulması için bu metodu çağıracağız.
-        // Test amaçlı main metodu, veritabanı dosyasının oluştuğunu görmek için çalıştırılabilir.
-        createTables();
-        // Bu main metodunu direkt çalıştırmak için:
-        // IntelliJ'de: Bu dosyayı aç, sağ tıkla -> Run 'Database.main()'
-        // Terminalde: mvn exec:java -Dexec.mainClass="database.Database"
+        // program starts
+        setupTables();
+        // finished yeyyy
     }
 }

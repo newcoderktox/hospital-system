@@ -1,207 +1,142 @@
 package ui;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader; // FXMLLoader importu eklendi (ileride logout için gerekebilir)
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent; // Parent importu eklendi
-import javafx.scene.Scene; // Scene importu eklendi
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
-import javafx.event.ActionEvent;// Stage importu eklendi (ileride logout için gerekebilir)
-
+import javafx.event.ActionEvent;
 import models.User;
-import database.LoginDB;
 
-import ui.ProfileController;
-import ui.MyAppointmentsController;
-import ui.CreateAppointmentController;
-
-
-import java.io.IOException; // IOException importu eklendi (ileride logout için gerekebilir)
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-// import java.util.stream.Collectors;
 
 public class MainDashboardController implements Initializable {
 
     @FXML
-    private TabPane dashboardTabPane;
+    private TabPane mainTabPane;
     @FXML
-    private Label welcomeLabel;
+    private Label welcomeTxt;
 
-    // Sekmeleri initialize sırasında saklamak için instance değişkenleri
-    // Sekmelerin FXML'de fx:id'si olmadığı için index ile alınıp burada saklanıyor
-    private Tab _storedProfileTab;
-    private Tab _storedMyAppointmentsTab;
-    private Tab _storedCreateAppointmentTab;
-    // Admin sekmeleri için değişkenler şimdilik kaldırıldı
+    private Tab profileTab;
+    private Tab myApptsTab;
+    private Tab createApptTab;
 
-    // fx:include ile dahil edilen Controller'lara erişim
-    // FXML'deki fx:id'ler buradaki değişken isimleriyle eşleşmeli
     @FXML
-    private ProfileController profileIncludeController; // fx:id="profileInclude"
+    private ProfileController profileRootController; //had to change the names bc of some errors idk
     @FXML
-    private MyAppointmentsController myAppointmentsIncludeController; // fx:id="myAppointmentsInclude"
+    private MyAppointmentsController myApptsRootController;
     @FXML
-    private CreateAppointmentController createAppointmentIncludeController; // fx:id="createAppointmentInclude"
-    // Yönetici sekmelerinin controller'ları şimdilik kaldırıldı
+    private CreateAppointmentController createApptRootController;
 
-
-    private User currentUser; // Giriş yapmış kullanıcı
-
+    private User loggedInUser;
+    //this method runs when the screen opens
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // initialize metodu FXML yüklendiğinde çağrılır.
-        // Bu aşamada TabPane ve Tab'lar FXML'den yüklenmiş olur.
-        // Sekmeleri TabPane'den alıp instance değişkenlerinde saklayalım
-        // ki adjustTabVisibility metodunda kullanabilelim.
+    public void initialize(URL url, ResourceBundle rb) {//get tabs from tab pane and save them
+        profileTab = mainTabPane.getTabs().get(0);
+        myApptsTab = mainTabPane.getTabs().get(1);
+        createApptTab = mainTabPane.getTabs().get(2);
 
-        // Sekmeleri index ile alıyoruz. Sekmelerin FXML'deki sırasına dikkat edin:
-        // Profil (0), Randevularım (1), Randevu Oluştur/Yönet (2), Doktor Yönetimi (3), Hasta Yönetimi (4)
-        _storedProfileTab = dashboardTabPane.getTabs().get(0);
-        _storedMyAppointmentsTab = dashboardTabPane.getTabs().get(1);
-        _storedCreateAppointmentTab = dashboardTabPane.getTabs().get(2);
+        //listen for tab changes to refresh data if needed
+        mainTabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            if (newTab == myApptsTab && myApptsRootController != null) {
+                myApptsRootController.loadApps();
+                System.out.println("DEBUG: my appts tab selected loading apps");
+            } else if (newTab == createApptTab && createApptRootController != null) {
+                System.out.println("DEBUG: create appt tab selected");
+            } else if (newTab == profileTab && profileRootController != null) {
+                System.out.println("DEBUG: profile tab selected");
+            }
+        });
 
-        // Eğer Admin sekmeleri FXML'de tanımlıysa ve onları da tutmak istersek, devam edebiliriz.
-        // Şu an adjustTabVisibility metodu sadece ilk 3 sekmeyi kullanıyor.
-
-
-        // Initialize aşamasında kullanıcı henüz set edilmemiştir.
-        // Kullanıcı bilgisi LoginController'dan gelir ve setUser metodunu çağırır.
-        // Sekme görünürlük ayarı setUser metodunda yapılmalı.
-        // loadAppointments, loadDoctors vb. çağrıları da setUser veya ilgili sekme controller'ında yapılmalı.
-
-        System.out.println("DEBUG: MainDashboardController initialize edildi."); // DEBUG
+        System.out.println("DEBUG: maindboardcont initialized");
     }
-
-    // LoginController'dan çağrılacak, giriş yapan kullanıcıyı alacak metod
+    //set user for dashboard and otherts
     public void setUser(User user) {
-        this.currentUser = user;
+        this.loggedInUser = user;
+        if (loggedInUser != null) {
+            System.out.println("DEBUG: setmyuser got user type " + loggedInUser.getUserType());
+            welcomeTxt.setText("Hoş Geldiniz, " + loggedInUser.getName() + " " + loggedInUser.getSurname() + "!");
 
-        if (currentUser != null) {
-            System.out.println("DEBUG: setUser metodunda alınan kullanıcı tipi: " + currentUser.getUserType()); // DEBUG
-
-            welcomeLabel.setText("Hoş Geldiniz, " + currentUser.getName() + " " + currentUser.getSurname() + "!");
-
-            // Sekmelerin Controller'larına kullanıcıyı ilet
-            // fx:include fx:id'leri doğruysa bu controller değişkenleri otomatik olarak doldurulur.
-            // Null kontrolü yaparak güvenli bir şekilde kullanıcıyı iletelim.
-
-            if (profileIncludeController != null) {
-                profileIncludeController.setUser(currentUser);
-                System.out.println("DEBUG: ProfileController (embedded) bulundu ve kullanıcı set edildi."); // DEBUG
+            if (profileRootController != null) {
+                profileRootController.setUser(loggedInUser);
+                System.out.println("DEBUG: profilecont found user set");
             } else {
-                System.err.println("HATA: ProfileController (embedded) henüz yüklenmedi veya fx:id yanlış (profileInclude)."); // HATA
+                System.err.println("ERROR: profilecont err or fx id wrong");
             }
-
-            if (myAppointmentsIncludeController != null) {
-                System.out.println("DEBUG: MyAppointmentsController (embedded) bulundu ve kullanıcı set edildi."); // DEBUG
-                myAppointmentsIncludeController.setUser(currentUser);
+            if (myApptsRootController != null) {
+                System.out.println("DEBUG: myapptcont found user set");
+                myApptsRootController.setUser(loggedInUser);
             } else {
-                System.err.println("HATA: MyAppointmentsController (embedded) henüz yüklenmedi veya fx:id yanlış (myAppointmentsInclude)."); // HATA
+                System.err.println("ERROR: myapptcont err or fx id wrong");
             }
-
-            if (createAppointmentIncludeController != null) {
-                System.out.println("DEBUG: CreateAppointmentController (embedded) bulundu ve kullanıcı set edildi."); // DEBUG
-                createAppointmentIncludeController.setUser(currentUser);
+            if (createApptRootController != null) {
+                System.out.println("DEBUG: createapptcont found user set");
+                createApptRootController.setUser(loggedInUser);
             } else {
-                System.err.println("HATA: CreateAppointmentController (embedded) henüz yüklenmedi veya fx:id yanlış (createAppointmentInclude)."); // HATA
+                System.err.println("ERROR: createapptcont err or fx id wrong");
             }
-
-            // Kullanıcı set edildikten sonra sekme görünürlüklerini kullanıcı tipine göre ayarla
-            adjustTabVisibility(); // Sekme ayarlamasını çağır
-
-
+            fixTabVis(); //show/hide tabs based on user type
         } else {
-            // Kullanıcı yoksa veya logout olduysa tüm dinamik sekmeleri gizle
-            dashboardTabPane.getTabs().clear();
-            welcomeLabel.setText("Lütfen Giriş Yapın.");
-            System.out.println("DEBUG: Kullanıcı set edilmedi (null). Sekmeler temizlendi."); // DEBUG
+            mainTabPane.getTabs().clear(); //if user is null clear tabs
+            welcomeTxt.setText("Lütfen giriş yapın.");
+            System.out.println("DEBUG:user not set null tabs cleared");
 
-            // Logout olduğunda include edilen controller'lara null kullanıcıyı iletmek
-            // veya içlerini temizlemek isteyebiliriz.
-            if (profileIncludeController != null) profileIncludeController.setUser(null);
-            if (myAppointmentsIncludeController != null) myAppointmentsIncludeController.setUser(null);
-            if (createAppointmentIncludeController != null) createAppointmentIncludeController.setUser(null);
+            //clear user for others too
+            if (profileRootController != null) profileRootController.setUser(null);
+            if (myApptsRootController != null) myApptsRootController.setUser(null);
+            if (createApptRootController != null) createApptRootController.setUser(null);
         }
     }
 
-
-    // Kullanıcı tipine göre sekmelerin görünürlüğünü ve metnini ayarlar
-    private void adjustTabVisibility() {
-        System.out.println("DEBUG: adjustTabVisibility çalıştı."); // DEBUG
-        // Önce tüm sekmeleri kaldır (herhangi bir kalıntı olmaması için)
-        dashboardTabPane.getTabs().clear(); // Tüm sekmeleri temizle
-
-        // _stored...Tab değişkenlerinin initialize metodunda doğru şekilde doldurulduğunu varsayıyoruz.
-        if (_storedProfileTab == null || _storedMyAppointmentsTab == null || _storedCreateAppointmentTab == null) {
-            System.err.println("HATA: adjustTabVisibility - Saklanmış sekmeler bulunamadı! initialize metodu düzgün çalışmamış olabilir veya FXML yapısı değişmiş olabilir."); // HATA
-            return; // Sekmeler yoksa devam etme
+    //adjust tab visibility based on user type
+    private void fixTabVis() {
+        System.out.println("DEBUG: fixtabvis started");
+        mainTabPane.getTabs().clear();
+        if (profileTab == null || myApptsTab == null || createApptTab == null) {
+            System.err.println("ERROR: fixtabvis init method err ");
+            return;
         }
-
-
-        if (currentUser != null) {
-            if ("patient".equalsIgnoreCase(currentUser.getUserType())) {
-                // Hasta ise
-                _storedProfileTab.setText("Profil");
-                _storedMyAppointmentsTab.setText("Randevularım");
-                _storedCreateAppointmentTab.setText("Randevu Oluştur / Yönet");
-
-                dashboardTabPane.getTabs().add(_storedProfileTab);
-                dashboardTabPane.getTabs().add(_storedMyAppointmentsTab);
-                dashboardTabPane.getTabs().add(_storedCreateAppointmentTab);
-                System.out.println("DEBUG: Kullan\u0131c\u0131 Patient, sekmeler eklendi: Profil, Randevular\u0131m, Randevu Olu\u015Ftur / Y\u00F6net"); // DEBUG
-
-
-            } else if ("doctor".equalsIgnoreCase(currentUser.getUserType())) {
-                // Doktor ise
-                _storedProfileTab.setText("Profil");
-                _storedMyAppointmentsTab.setText("Takvimimi Yönet"); // Sekme başlığını doktor için ayarla
-                _storedCreateAppointmentTab.setText("Randevu Oluştur / Yönet"); // Orijinal metni geri set et (göstermeyeceğiz)
-
-                dashboardTabPane.getTabs().add(_storedProfileTab);
-                // Doktor için Randevu Oluştur sekmesini DEĞİL, Randevularım sekmesini (adı değişmiş haliyle) ekliyoruz
-                dashboardTabPane.getTabs().add(_storedMyAppointmentsTab); // Şimdi adı "Takvimimi Yönet" oldu
-
-                // Randevu Oluştur sekmesini doktor için eklemiyoruz.
-
-                System.out.println("DEBUG: Kullan\u0131c\u0131 Doctor, sekmeler eklendi: Profil, Takvimimi Y\u00F6net"); // DEBUG
+        if (loggedInUser != null) {
+            if ("patient".equalsIgnoreCase(loggedInUser.getUserType())) { //patient tabs
+                profileTab.setText("Profil");
+                myApptsTab.setText("Randevularım");
+                createApptTab.setText("Randevu Oluştur / Yönet");
+                mainTabPane.getTabs().add(profileTab);
+                mainTabPane.getTabs().add(myApptsTab);
+                mainTabPane.getTabs().add(createApptTab);
+                System.out.println("DEBUG: user is patient tabs addedd");
+            } else if ("doctor".equalsIgnoreCase(loggedInUser.getUserType())) { //doctor tabs
+                profileTab.setText("Profil");
+                myApptsTab.setText("Randevularım");
+                mainTabPane.getTabs().add(profileTab);
+                mainTabPane.getTabs().add(myApptsTab);
 
             }
-            // Admin kullanıcı tipi ve yönetim sekmeleri (ileride eklenecek)
         }
-        // Kullanıcı yoksa zaten sekmeler clear() ile kaldırıldı.
     }
-
-    // Logout metodu (şimdi ekleyeceğiz)
+    //runs when logout button clicked
     @FXML
     private void handleLogout(ActionEvent event) {
-        System.out.println("DEBUG: Logout butonuna tıklandı."); // DEBUG
-        // Kullanıcıyı null yap
-        setUser(null);
-
-        // Login ekranına geri dön
-        // Mevcut sahneyi (Scene) ve pencereyi (Stage) al
-        Stage stage = (Stage) dashboardTabPane.getScene().getWindow();
+        System.out.println("DEBUG: logout button clicked");
+        setUser(null); //clear user info
+        Stage stage = (Stage) mainTabPane.getScene().getWindow(); //go back to login screen
         try {
-            // login_view.fxml dosyasını yükle
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LoginUI.fxml"));
             Parent root = loader.load();
-
-            // Yeni sahneyi oluştur ve pencereye set et
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Hastane Randevu Sistemi - Giriş"); // Pencere başlığını değiştir
-            stage.show(); // Pencereyi göster
-
-            System.out.println("DEBUG: Logout başarılı, Login ekranına dönüldü."); // DEBUG
-
+            Scene newScene = new Scene(root);
+            stage.setScene(newScene);
+            stage.setTitle("Hastane Randevu Sistemi - Giriş");
+            stage.show();
+            System.out.println("DEBUG: logout ok back to login screen");
         } catch (IOException e) {
-            System.err.println("HATA: Logout sırasında login_view.fxml yüklenemedi."); // HATA
+            System.err.println("ERROR: logout loginui load problem " + e.getMessage());
             e.printStackTrace();
         }
     }
-
 }

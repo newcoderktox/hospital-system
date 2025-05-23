@@ -1,88 +1,78 @@
-package ui; // Senin paket adın farklı olabilir
+package ui;
 
-// Gerekli importlar
-import database.Database; // Veritabanı işlemleri için
+import database.Database;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.net.URL; // URL sınıfı için import
+import java.net.URL;
 
+//this is the main app class it starts everything
 public class MainApp extends Application {
 
     @Override
-    public void start(Stage stage) throws IOException {
-        System.out.println("DEBUG: App start metodu başladı."); // DEBUG 1
+    public void start(Stage stage) throws IOException { //startruns when app opens
+        System.out.println("DEBUG: app  started");
 
         try {
-            // Veritabanı tablolarını oluştur veya kontrol et (uygulama başlangıcında)
-            Database.createTables();
-            System.out.println("DEBUG: Veritabanı tabloları oluşturuldu/kontrol edildi."); // DEBUG 2
-
-            // login_view.fxml yerine LoginUI.fxml dosyasını yükle
-            // <<<< BURASI DÜZELTİLDİ >>>>
-            URL loginViewUrl = getClass().getResource("/fxml/LoginUI.fxml");
-            if (loginViewUrl == null) {
-                System.err.println("HATA: LoginUI.fxml classpath'te bulunamadı! Lütfen dosya yolunu ve adını kontrol edin: /fxml/LoginUI.fxml"); // DEBUG FXML Path Hatası
-                // FXML bulunamazsa uygulamadan çıkış yapalım
-                System.out.println("DEBUG: FXML bulunamadı, uygulama kapatılıyor.");
-                System.exit(1); // Uygulamadan çık
+            //db tables are ready
+            Database.setupTables();
+            System.out.println("DEBUG: db tables made or checked");
+            //find login screen fxml file
+            URL loginUrl = getClass().getResource("/fxml/LoginUI.fxml");
+            if (loginUrl == null) {
+                System.err.println("ERROR: LoginUI.fxml not found check path /fxml/LoginUI.fxml");
+                System.out.println("DEBUG: fxml not found app closing");
+                System.exit(1); //exit app if not found
             }
-            System.out.println("DEBUG: LoginUI.fxml URL bulundu: " + loginViewUrl); // DEBUG 3
+            System.out.println("DEBUG: LoginUI.fxml url found " + loginUrl);
+            //load fxml file
+            FXMLLoader myLoader = new FXMLLoader(loginUrl);
+            System.out.println("DEBUG: FXMLLoader made");
+            //make the scene from fxml
+            Scene mainScene = new Scene(myLoader.load(), 800, 600);
+            System.out.println("DEBUG: Scene made and fxml loaded");
 
-
-            // FXMLLoader objesini oluştur
-            FXMLLoader fxmlLoader = new FXMLLoader(loginViewUrl);
-            System.out.println("DEBUG: FXMLLoader oluşturuldu."); // DEBUG 4
-
-            // Scene objesini oluştur ve FXML'i yükle
-            Scene scene = new Scene(fxmlLoader.load(), 800, 600); // Boyutları kendi FXML'ine göre ayarla
-            System.out.println("DEBUG: Scene oluşturuldu ve FXML yüklendi."); // DEBUG 5
-
-            // CSS dosyasını sahneye ekleme kısmı (Eğer FXML'de yüklüyorsan burası yorum satırı kalmalı)
+            //load css style file
             try {
-                URL cssUrl = getClass().getResource("/resoruces/application.css");
-                if (cssUrl == null) {
-                    System.err.println("HATA: application.css classpath'te bulunamadı! Lütfen dosya yolunu kontrol edin: /resouces/application.css"); // DEBUG CSS Path Hatası
+                URL styleUrl = getClass().getResource("/resoruces/application.css");
+                if (styleUrl == null) {
+                    System.err.println("ERROR: err check css");
                 } else {
-                    // Eğer CSS'i buradan yüklemek istiyorsan aşağıdaki satırın yorumunu kaldır
-                    scene.getStylesheets().add(cssUrl.toExternalForm());
-                    System.out.println("DEBUG: application.css URL bulundu (yüklenip yüklenmediği start metoduna bağlı): " + cssUrl); // DEBUG CSS Found
+                    //add css to scene
+                    mainScene.getStylesheets().add(styleUrl.toExternalForm());
+                    System.out.println("DEBUG: application.css url found " + styleUrl);
                 }
-            } catch (Exception e) { // CSS yüklenirken olası hatalar
-                System.err.println("HATA: CSS yüklenirken beklenmedik hata: " + e.getMessage());
+            } catch (Exception e) { //catch any css error
+                System.err.println("ERROR: css load problem " + e.getMessage());
                 e.printStackTrace();
             }
 
+            //set window title and show it
+            stage.setTitle("Hospital App");
+            System.out.println("DEBUG: stage title set");
+            stage.setScene(mainScene);
+            System.out.println("DEBUG: scene set to stage");
+            stage.show(); //show the window
+            System.out.println("DEBUG: stage shown app start method finished");
 
-            // Sahne ve Stage ayarları
-            stage.setTitle("Hospital Appointment System");
-            System.out.println("DEBUG: Stage başlığı ayarlandı."); // DEBUG 6
-            stage.setScene(scene);
-            System.out.println("DEBUG: Scene sahneye set edildi."); // DEBUG 7
-            stage.show();
-            System.out.println("DEBUG: Sahne gösterildi. App start metodu tamamlandı."); // DEBUG 8
-
-        } catch (IOException e) {
-            // FXML yükleme hatalarını yakala
-            System.err.println("HATA: FXML yüklenirken veya başlangıçta IO hatası oluştu: " + e.getMessage()); // DEBUG Catch IO
+        } catch (IOException e) { //catch fxml loading errors
+            System.err.println("ERROR: fxml load or start io error " + e.getMessage());
             e.printStackTrace();
-            System.out.println("DEBUG: IO Hatası, uygulama kapatılıyor.");
-            System.exit(1); // Hata durumunda uygulamadan çıkış yap
-        } catch (Exception e) {
-            // Diğer genel hataları yakala
-            System.err.println("HATA: Uygulama başlangıcında beklenmedik genel hata: " + e.getMessage()); // DEBUG General Catch
+            System.out.println("DEBUG: error app closing");
+            System.exit(1); //exit app on error
+        } catch (Exception e) { //catch any other errors
+            System.err.println("ERROR: general app start error " + e.getMessage());
             e.printStackTrace();
-            System.out.println("DEBUG: Genel hata, uygulama kapatılıyor.");
-            System.exit(1); // Hata durumunda uygulamadan çıkış yap
+            System.out.println("DEBUG: general error app closing");
+            System.exit(1); //exit app on error
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println("DEBUG: App main metodu başladı."); // DEBUG Main
-        launch(); // JavaFX uygulamasını başlatır
-        System.out.println("DEBUG: App main metodu tamamlandı."); // DEBUG Main End
+    public static void main(String[] args) { //main method runs first
+        System.out.println("DEBUG: app main method started");
+        launch(); //start the JavaFX app
+        System.out.println("DEBUG: app main method finished");
     }
 }

@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import java.net.URL?> <VBox alignment="CENTER" spacing="10.0" prefHeight="550.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.RegisterController"
+<?import java.net.URL?> <VBox alignment="CENTER" spacing="10.0" prefHeight="750.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.RegisterController"
                               styleClass="register-container"> <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
 </padding>
@@ -22,24 +22,23 @@
             </VBox.margin>
         </Label>
 
-        <ComboBox fx:id="userTypeComboBox" promptText="Kullanıcı Tipi Seçin">
+        <ComboBox fx:id="typeCombo" promptText="Kullanıcı Tipi Seçin">
             <VBox.margin>
                 <Insets />
             </VBox.margin>
         </ComboBox>
-        <TextField fx:id="usernameField" promptText="TC kimlik no" />
-        <PasswordField fx:id="passwordField" promptText="Şifre" />
-        <PasswordField fx:id="confirmPasswordField" promptText="Şifre Tekrar" />
-        <TextField fx:id="nameField" promptText="Ad" />
-        <TextField fx:id="surnameField" promptText="Soyad" />
-        <TextField fx:id="phoneNumberField" promptText="Telefon Numarası" />
-        <TextField fx:id="emailField" promptText="E-posta" />
+        <TextField fx:id="userTxt" promptText="TC kimlik no" />
+        <PasswordField fx:id="passTxt" promptText="Şifre" />
+        <PasswordField fx:id="confirmPassTxt" promptText="Şifre Tekrar" />
+        <TextField fx:id="nameTxt" promptText="Ad" />
+        <TextField fx:id="surnameTxt" promptText="Soyad" />
+        <TextField fx:id="phoneTxt" promptText="Telefon Numarası" />
+        <TextField fx:id="emailTxt" promptText="E-posta" />
+        <TextField fx:id="specTxt" promptText="Uzmanlık Alanı" visible="false" managed="false" />
+        <TextField fx:id="dobTxt" promptText="Doğum Tarihi (GG.AA.YYYY)" visible="false" managed="false" />
+        <TextField fx:id="bloodTxt" promptText="Kan Grubu" visible="false" managed="false" />
 
-        <TextField fx:id="specializationField" promptText="Uzmanlık Alanı" visible="false" managed="false" />
-        <TextField fx:id="dateOfBirthField" promptText="Doğum Tarihi (GG.AA.YYYY)" visible="false" managed="false" />
-        <TextField fx:id="bloodGroupField" promptText="Kan Grubu" visible="false" managed="false" />
-
-        <Label fx:id="messageLabel" textFill="#ff0000" /> <Button onAction="#handleRegisterButton" prefWidth="200.0" text="Kayıt Ol" styleClass="button" /> <Button onAction="#handleBackButton" prefWidth="200.0" text="Geri Dön" styleClass="back-button" /> </children>
+        <Label fx:id="msgLbl" textFill="#ff0000" /> <Button onAction="#registerBtn" prefWidth="200.0" text="Kayıt Ol" styleClass="button" /> <Button onAction="#goBack" prefWidth="200.0" text="Geri Dön" styleClass="back-button" /> </children>
 
     <stylesheets>
         <URL value="@/resoruces/application.css" />

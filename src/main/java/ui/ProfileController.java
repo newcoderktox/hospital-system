@@ -6,138 +6,120 @@ import javafx.scene.control.Label;
 import models.Doctor;
 import models.Patient;
 import models.User;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ProfileController implements Initializable {
+//this class shows user profile
+public class ProfileController implements Initializable { //initializable makes initialize() run when screen loads
 
-    @FXML private Label welcomeProfileLabel;
-    @FXML private Label usernameLabel;
-    @FXML private Label nameLabel;
-    @FXML private Label surnameLabel;
-    @FXML private Label userTypeLabel;
-    @FXML private Label phoneNumberLabel;
-    @FXML private Label emailLabel;
+    @FXML private Label welcomeProfLbl;
+    @FXML private Label userLbl;
+    @FXML private Label nameLbl;
+    @FXML private Label surnameLbl;
+    @FXML private Label typeLbl;
+    @FXML private Label phoneLbl;
+    @FXML private Label emailLbl;
+    @FXML private Label patDetTitleLbl;
+    @FXML private Label dobLbl;
+    @FXML private Label bloodLbl;
+    @FXML private Label docDetTitleLbl;
+    @FXML private Label specLbl;
 
-    // Patient specific labels
-    @FXML private Label patientDetailsTitleLabel;
-    @FXML private Label dateOfBirthLabel;
-    @FXML private Label bloodGroupLabel;
-
-    // Doctor specific labels
-    @FXML private Label doctorDetailsTitleLabel;
-    @FXML private Label specializationLabel;
-
-    private User currentUser;
-
+    private User currentUser; //current logged in user
+    //this method runs when the screen opens
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Başlangıçta tüm özel labelları gizle ve managed özelliğini kapat
-        patientDetailsTitleLabel.setVisible(false);
-        patientDetailsTitleLabel.setManaged(false); // <<<< EKLE: Managed özelliğini kapat
-        dateOfBirthLabel.setVisible(false);
-        dateOfBirthLabel.setManaged(false); // <<<< EKLE: Managed özelliğini kapat
-        bloodGroupLabel.setVisible(false);
-        bloodGroupLabel.setManaged(false); // <<<< EKLE: Managed özelliğini kapat
+        //hide all specific labels at start
+        patDetTitleLbl.setVisible(false);
+        patDetTitleLbl.setManaged(false);
+        dobLbl.setVisible(false);
+        dobLbl.setManaged(false);
+        bloodLbl.setVisible(false);
+        bloodLbl.setManaged(false);
+        docDetTitleLbl.setVisible(false);
+        docDetTitleLbl.setManaged(false);
+        specLbl.setVisible(false);
+        specLbl.setManaged(false);
 
-        doctorDetailsTitleLabel.setVisible(false);
-        doctorDetailsTitleLabel.setManaged(false); // <<<< EKLE: Managed özelliğini kapat
-        specializationLabel.setVisible(false);
-        specializationLabel.setManaged(false); // <<<< EKLE: Managed özelliğini kapat
-
-        System.out.println("DEBUG: ProfileController initialize edildi. Başlangıç managed/visible state ayarlandı."); // DEBUG
+        System.out.println("DEBUG: profilecont initialized start visibility set");
     }
-
+    //set user for profile screen
     public void setUser(User user) {
         this.currentUser = user;
-        System.out.println("DEBUG: ProfileController - setUser metodu çağrıldı. Kullanıcı tipi: " + (currentUser != null ? currentUser.getUserType() : "null"));
-
-        // **DEBUG:** FXML injection kontrolü (önceki hataları görmek için kalsın)
-        if (specializationLabel == null) {
-            System.err.println("HATA: ProfileController - specializationLabel @FXML injection başarısız! profile_view.fxml dosyasındaki fx:id=\"specializationLabel\" kontrol edin.");
+        System.out.println("DEBUG: setuser called user type " + (currentUser != null ? currentUser.getUserType() : "null"));
+        //check if labels are connected from fxml
+        if (specLbl == null) {
+            System.err.println("ERROR: speclbl not connected check fxml");
         }
-        if (patientDetailsTitleLabel == null) System.err.println("HATA: ProfileController - patientDetailsTitleLabel @FXML injection başarısız!");
-        if (dateOfBirthLabel == null) System.err.println("HATA: ProfileController - dateOfBirthLabel @FXML injection başarısız!");
-        if (bloodGroupLabel == null) System.err.println("HATA: ProfileController - bloodGroupLabel @FXML injection başarısız!");
-        if (doctorDetailsTitleLabel == null) System.err.println("HATA: ProfileController - doctorDetailsTitleLabel @FXML injection başarısız!");
-
-
+        if (patDetTitleLbl == null) System.err.println("ERROR: pattitle not connected");
+        if (dobLbl == null) System.err.println("ERROR: dob not connected");
+        if (bloodLbl == null) System.err.println("ERROR: blood not connected");
+        if (docDetTitleLbl == null) System.err.println("ERROR: doctitle not connected");
         if (currentUser != null) {
-            // Genel kullanıcı bilgileri (bu labellar her zaman görünür ve managed olmalı)
-            usernameLabel.setText("Kullanıcı Adı: " + (currentUser.getUsername() != null ? currentUser.getUsername() : "Belirtilmemiş"));
-            nameLabel.setText("Ad: " + (currentUser.getName() != null ? currentUser.getName() : "Belirtilmemiş"));
-            surnameLabel.setText("Soyad: " + (currentUser.getSurname() != null ? currentUser.getSurname() : "Belirtilmemiş"));
-            userTypeLabel.setText("Kullanıcı Tipi: " + (currentUser.getUserType() != null ? currentUser.getUserType() : "Belirtilmemiş"));
-            phoneNumberLabel.setText("Telefon: " + (currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "Belirtilmemiş"));
-            emailLabel.setText("Email: " + (currentUser.getEmail() != null ? currentUser.getEmail() : "Belirtilmemiş"));
+            //set common user info
+            userLbl.setText("TC Kimlik No: " + (currentUser.getUsername() != null ? currentUser.getUsername() : "Belirtilmemiş"));
+            nameLbl.setText("Ad: " + (currentUser.getName() != null ? currentUser.getName() : "Belirtilmemiş"));
+            surnameLbl.setText("Soyad: " + (currentUser.getSurname() != null ? currentUser.getSurname() : "Belirtilmemiş"));
+            typeLbl.setText("Kullanıcı Tipi: " + (currentUser.getUserType() != null ? currentUser.getUserType() : "Belirtilmemiş"));
+            phoneLbl.setText("Telefon: " + (currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "Belirtilmemiş"));
+            emailLbl.setText("Email: " + (currentUser.getEmail() != null ? currentUser.getEmail() : "Belirtilmemiş"));
 
-            // Kullanıcı tipine göre özel detayları ayarla
-            if (currentUser instanceof Patient) { // Kullanıcı hasta ise
-                Patient patient = (Patient) currentUser;
-                System.out.println("DEBUG: ProfileController - Kullanıcı Patient, hasta detayları ayarlanıyor."); // DEBUG
-
-                // Hasta'ya özel labelları görünür yap ve managed özelliğini aç
-                if (patientDetailsTitleLabel != null) { patientDetailsTitleLabel.setVisible(true); patientDetailsTitleLabel.setManaged(true); } // <<<< EKLE: Managed özelliğini aç
-                if (dateOfBirthLabel != null) { dateOfBirthLabel.setVisible(true); dateOfBirthLabel.setManaged(true); } // <<<< EKLE: Managed özelliğini aç
-                if (bloodGroupLabel != null) { bloodGroupLabel.setVisible(true); bloodGroupLabel.setManaged(true); } // <<<< EKLE: Managed özelliğini aç
-
-                dateOfBirthLabel.setText("Doğum Tarihi: " + (patient.getDateOfBirth() != null ? patient.getDateOfBirth() : "Belirtilmemiş"));
-                bloodGroupLabel.setText("Kan Grubu: " + (patient.getBloodGroup() != null ? patient.getBloodGroup() : "Belirtilmemiş"));
-
-                // Doktor'a özel labelları gizle ve managed özelliğini kapat
-                if (doctorDetailsTitleLabel != null) { doctorDetailsTitleLabel.setVisible(false); doctorDetailsTitleLabel.setManaged(false); } // <<<< EKLE: Managed özelliğini kapat
-                if (specializationLabel != null) { specializationLabel.setVisible(false); specializationLabel.setManaged(false); } // <<<< EKLE: Managed özelliğini kapat
+            //check user type for specific details
+            if (currentUser instanceof Patient patient) { //if user is a Patient
+                System.out.println("DEBUG: user is Patient setting patient details");
+                //show patient labels
+                if (patDetTitleLbl != null) { patDetTitleLbl.setVisible(true); patDetTitleLbl.setManaged(true); }
+                if (dobLbl != null) { dobLbl.setVisible(true); dobLbl.setManaged(true); }
+                if (bloodLbl != null) { bloodLbl.setVisible(true); bloodLbl.setManaged(true); }
+                dobLbl.setText("Doğum Tarihi: " + (patient.getDateOfBirth() != null ? patient.getDateOfBirth() : "Belirtilmemiş"));
+                bloodLbl.setText("kan Grubu: " + (patient.getBloodGroup() != null ? patient.getBloodGroup() : "Belirtilmemiş"));
+                //hide doctor labels
+                if (docDetTitleLbl != null) { docDetTitleLbl.setVisible(false); docDetTitleLbl.setManaged(false); }
+                if (specLbl != null) { specLbl.setVisible(false); specLbl.setManaged(false); }
 
 
-            } else if (currentUser instanceof Doctor) { // Kullanıcı doktor ise
-                Doctor doctor = (Doctor) currentUser;
-                System.out.println("DEBUG: ProfileController - Kullanıcı Doctor, doktor detayları ayarlanıyor."); // DEBUG
-                System.out.println("DEBUG: ProfileController - Doctor objesindeki uzmanlık: " + doctor.getSpecialization());
-
-                // Doktor'a özel labelları görünür yap ve managed özelliğini aç
-                if (doctorDetailsTitleLabel != null) { doctorDetailsTitleLabel.setVisible(true); doctorDetailsTitleLabel.setManaged(true); } // <<<< EKLE: Managed özelliğini aç
-                if (specializationLabel != null) {
-                    specializationLabel.setVisible(true);
-                    specializationLabel.setManaged(true); // <<<< EKLE: Managed özelliğini aç
-                    specializationLabel.setText("Uzmanlık: " + (doctor.getSpecialization() != null ? doctor.getSpecialization() : "Belirtilmemiş"));
-                    System.out.println("DEBUG: ProfileController - specializationLabel visible, managed ve text ayarlandı."); // DEBUG
+            } else if (currentUser instanceof Doctor doctor) { //if user is a doctor
+                System.out.println("DEBUG: user is doc setting doc details");
+                System.out.println("DEBUG: doctor obj spec " + doctor.getSpecialization());
+                //show doctor labels
+                if (docDetTitleLbl != null) { docDetTitleLbl.setVisible(true); docDetTitleLbl.setManaged(true); }
+                if (specLbl != null) {
+                    specLbl.setVisible(true);
+                    specLbl.setManaged(true);
+                    specLbl.setText("Uzmanlık: " + (doctor.getSpecialization() != null ? doctor.getSpecialization() : "Belirtilmemiş"));
+                    System.out.println("DEBUG: speclbl visible managed text set");
                 } else {
-                    System.err.println("HATA: ProfileController - specializationLabel null, text/visibility/managed ayarlanamadı.");
+                    System.err.println("ERROR: speclbl null cant set text visibility managed");
                 }
+                //hide patient labels
+                if (patDetTitleLbl != null) { patDetTitleLbl.setVisible(false); patDetTitleLbl.setManaged(false); }
+                if (dobLbl != null) { dobLbl.setVisible(false); dobLbl.setManaged(false); }
+                if (bloodLbl != null) { bloodLbl.setVisible(false); bloodLbl.setManaged(false); }
 
-                // Hasta'ya özel labelları gizle ve managed özelliğini kapat
-                if (patientDetailsTitleLabel != null) { patientDetailsTitleLabel.setVisible(false); patientDetailsTitleLabel.setManaged(false); } // <<<< EKLE: Managed özelliğini kapat
-                if (dateOfBirthLabel != null) { dateOfBirthLabel.setVisible(false); dateOfBirthLabel.setManaged(false); } // <<<< EKLE: Managed özelliğini kapat
-                if (bloodGroupLabel != null) { bloodGroupLabel.setVisible(false); bloodGroupLabel.setManaged(false); } // <<<< EKLE: Managed özelliğini kapat
-
-            } else { // Diğer kullanıcı tipleri (örn. Admin) veya null kullanıcı
-                System.out.println("DEBUG: ProfileController - Kullanıcı tipi bilinmiyor veya özel detay yok, özel labellar gizleniyor."); // DEBUG
-                if (patientDetailsTitleLabel != null) { patientDetailsTitleLabel.setVisible(false); patientDetailsTitleLabel.setManaged(false); }
-                if (dateOfBirthLabel != null) { dateOfBirthLabel.setVisible(false); dateOfBirthLabel.setManaged(false); }
-                if (bloodGroupLabel != null) { bloodGroupLabel.setVisible(false); bloodGroupLabel.setManaged(false); }
-                if (doctorDetailsTitleLabel != null) { doctorDetailsTitleLabel.setVisible(false); doctorDetailsTitleLabel.setManaged(false); }
-                if (specializationLabel != null) { specializationLabel.setVisible(false); specializationLabel.setManaged(false); }
+            } else { //unknown user
+                System.out.println("DEBUG: unknown user type or no specific details hiding labels");
+                if (patDetTitleLbl != null) { patDetTitleLbl.setVisible(false); patDetTitleLbl.setManaged(false); }
+                if (dobLbl != null) { dobLbl.setVisible(false); dobLbl.setManaged(false); }
+                if (bloodLbl != null) { bloodLbl.setVisible(false); bloodLbl.setManaged(false); }
+                if (docDetTitleLbl != null) { docDetTitleLbl.setVisible(false); docDetTitleLbl.setManaged(false); }
+                if (specLbl != null) { specLbl.setVisible(false); specLbl.setManaged(false); }
             }
-        } else { // Kullanıcı null ise (logout sonrası gibi)
-            System.out.println("DEBUG: ProfileController - Kullanıcı null, tüm labellar temizleniyor/gizleniyor."); // DEBUG
-            usernameLabel.setText("Kullanıcı Adı: ");
-            nameLabel.setText("Ad: ");
-            surnameLabel.setText("Soyad: ");
-            userTypeLabel.setText("Kullanıcı Tipi: ");
-            phoneNumberLabel.setText("Telefon: ");
-            emailLabel.setText("Email: ");
+        } else { //if user is null clear all labels
+            System.out.println("DEBUG: user is null clear labels");
+            userLbl.setText("Tc Kimlik No: ");
+            nameLbl.setText("Ad: ");
+            surnameLbl.setText("Soyad: ");
+            typeLbl.setText("Kullanıcı Tipi: ");
+            phoneLbl.setText("Telefon: ");
+            emailLbl.setText("Email: ");
 
-            if (patientDetailsTitleLabel != null) { patientDetailsTitleLabel.setVisible(false); patientDetailsTitleLabel.setManaged(false); }
-            if (dateOfBirthLabel != null) { dateOfBirthLabel.setVisible(false); dateOfBirthLabel.setManaged(false); }
-            if (bloodGroupLabel != null) { bloodGroupLabel.setVisible(false); bloodGroupLabel.setManaged(false); }
-            if (doctorDetailsTitleLabel != null) { doctorDetailsTitleLabel.setVisible(false); doctorDetailsTitleLabel.setManaged(false); }
-            if (specializationLabel != null) { specializationLabel.setVisible(false); specializationLabel.setManaged(false); }
+            //hide all specific labels
+            if (patDetTitleLbl != null) { patDetTitleLbl.setVisible(false); patDetTitleLbl.setManaged(false); }
+            if (dobLbl != null) { dobLbl.setVisible(false); dobLbl.setManaged(false); }
+            if (bloodLbl != null) { bloodLbl.setVisible(false); bloodLbl.setManaged(false); }
+            if (docDetTitleLbl != null) { docDetTitleLbl.setVisible(false); docDetTitleLbl.setManaged(false); }
+            if (specLbl != null) { specLbl.setVisible(false); specLbl.setManaged(false); }
         }
-        System.out.println("DEBUG: ProfileController - setUser metodu tamamlandı."); // DEBUG
+        System.out.println("DEBUG: setuser finished");
     }
-
-    // initialize metodunda başlangıç managed state'lerini set ettim (yukarıda güncellendi)
-
-    // finalize metodu olmamalı
 }

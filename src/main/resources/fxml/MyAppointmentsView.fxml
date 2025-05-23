@@ -19,16 +19,16 @@
                 </Label>
                 <Label fx:id="welcomeLabel" text="Randevularınız yüklendi." />
 
-                <TableView fx:id="appointmentsTable" VBox.vgrow="ALWAYS">
+                <TableView fx:id="apptsTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="dateColumn" prefWidth="100.0" text="Tarih" />
-                        <TableColumn fx:id="timeColumn" prefWidth="80.0" text="Saat" />
-                        <TableColumn fx:id="doctorColumn" prefWidth="200.0" text="Doktor Adı" />
-                        <TableColumn fx:id="specializationColumn" prefWidth="150.0" text="Uzmanlık" />
-                        <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Durum" />
-                        <TableColumn fx:id="cancelColumn" prefWidth="100.0" text="İşlem" /> </columns>
+                        <TableColumn fx:id="dateCol" prefWidth="100.0" text="Tarih" />
+                        <TableColumn fx:id="timeCol" prefWidth="80.0" text="Saat" />
+                        <TableColumn fx:id="doctorCol" prefWidth="200.0" text="Doktor Adı" />
+                        <TableColumn fx:id="specialtyCol" prefWidth="150.0" text="Uzmanlık" />
+                        <TableColumn fx:id="statusCol" prefWidth="100.0" text="Durum" />
+                        <TableColumn fx:id="cancelCol" prefWidth="100.0" text="İşlem" /> </columns>
                 </TableView>
-                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#handleRefreshAppointments" text="Randevuları Yenile" />
+                <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#handleRefreshAppts" text="Randevuları Yenile" />
             </children>
         </VBox>
     </children>

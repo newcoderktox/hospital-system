@@ -17,7 +17,6 @@
     -fx-padding: 0 0 15px 0;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 1, 0, 0, 1);
 }
-
 .register-container .label {
     -fx-font-size: 14px;
     -fx-text-fill: #505c6e;
@@ -29,85 +28,74 @@
 .register-container .password-field,
 .register-container .combo-box,
 .register-container .date-picker {
-    -fx-font-size: 15px; /* login.css'e benzer font boyutu */
-    -fx-padding: 12px; /* login.css'e benzer iç boşluk */
-    -fx-border-color: #e9ecef; /* login.css'e benzer kenarlık rengi */
-    -fx-border-radius: 8; /* login.css'e benzer köşe yuvarlaklığı */
-    -fx-background-radius: 8; /* login.css'e benzer arka plan köşe yuvarlaklığı */
-    -fx-background-color: #f8f9fa; /* login.css'e benzer hafif gri arka plan */
-    -fx-prompt-text-fill: #adb5bd; /* login.css'e benzer daha açık gri placeholder */
-    -fx-pref-width: 250px; /* Sabit genişlik (isteğe bağlı, login.css'te yoktu ama burada bırakıldı) */
+    -fx-font-size: 15px;
+    -fx-padding: 12px;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: #f8f9fa;
+    -fx-prompt-text-fill: #adb5bd;
+    -fx-pref-width: 250px;
 }
 
-/* Odaklanıldığında (focus) stil */
 .register-container .text-field:focused,
 .register-container .password-field:focused,
 .register-container .combo-box:focused,
 .register-container .date-picker:focused {
-    -fx-border-color: #4dabca; /* login.css'e benzer yumuşak mavi kenarlık */
-    -fx-background-color: #ffffff; /* login.css'e benzer beyaz arka plan */
-    -fx-faint-focus-color: transparent; /* login.css'e benzer */
-    -fx-focus-color: transparent; /* login.css'e benzer */
-    -fx-effect: dropshadow(gaussian, rgba(77,171,202,0.1), 4, 0, 0, 0); /* login.css'e benzer hafif mavi gölge */
+    -fx-border-color: #4dabca;
+    -fx-background-color: #ffffff;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(77,171,202,0.1), 4, 0, 0, 0);
 }
 
-/* Özel alanlar için (Uzmanlık, Doğum Tarihi, Kan Grubu) VBox konteyneri */
-/* Eğer bu alanları sarmalayan bir VBox varsa ve styleClass="special-fields-container" eklenirse */
 .special-fields-container {
-    -fx-spacing: 8px; /* İçindeki elementler arası boşluk */
-    -fx-padding: 10px 0 0 0; /* Üstten boşluk */
+    -fx-spacing: 8px;
+    -fx-padding: 10px 0 0 0;
 }
 
-
-/* Kayıt Butonu stilleri */
-/* login.css'deki buton stillerine benzer şekilde güncellendi (renk hariç, yeşil bırakıldı) */
 .register-container .button {
-    -fx-background-color: #4dabca; /* Yeşil buton (kayıt için uygun) */
+    -fx-background-color: #4dabca;
     -fx-text-fill: white;
     -fx-font-size: 15px;
-    -fx-font-weight: 600; /* login.css'e benzer Semi-bold */
-    -fx-padding: 12px 25px 12px 25px; /* login.css'e benzer daha büyük buton */
-    -fx-border-radius: 8; /* login.css'e benzer */
-    -fx-background-radius: 8; /* login.css'e benzer */
+    -fx-font-weight: 600;
+    -fx-padding: 12px 25px 12px 25px;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1); /* login.css'e benzer hafif gölge */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
 }
 
 .register-container .button:hover {
-    -fx-background-color: #3d99b8; /* Üzerine gelince biraz daha koyu yeşil */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0, 0, 2); /* Hover durumunda daha belirgin gölge */
+    -fx-background-color: #3d99b8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0, 0, 2);
 }
 
 .register-container .button:pressed {
-    -fx-background-color: #2c7f9b; /* Daha koyu basılı renk */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1); /* Daha az gölge */
+    -fx-background-color: #2c7f9b;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);
 }
 
-
-/* Geri Butonu stilleri */
-/* Eğer geri butonuna styleClass="back-button" eklersen bu stil uygulanır. */
-/* login.css'deki buton stillerine benzer şekilde güncellendi */
 .back-button {
-    -fx-background-color: #6c757d; /* Gri buton */
+    -fx-background-color: #6c757d;
     -fx-text-fill: white;
-    -fx-font-size: 14px; /* login.css'e benzer font boyutu */
-    -fx-padding: 8px 15px; /* login.css'e benzer iç boşluk */
-    -fx-border-radius: 8; /* login.css'e benzer */
-    -fx-background-radius: 8; /* login.css'e benzer */
+    -fx-font-size: 14px;
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1); /* Hafif gölge */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
 }
 
 .back-button:hover {
-    -fx-background-color: #5a6268; /* Üzerine gelince biraz daha koyu gri */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0, 0, 2); /* Hover durumunda daha belirgin gölge */
+    -fx-background-color: #5a6268;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0, 0, 2);
 }
 
 .back-button:pressed {
-    -fx-background-color: #4e555b; /* Daha koyu basılı renk */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1); /* Daha az gölge */
+    -fx-background-color: #4e555b;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);
 }
-
 
 
 #messageLabel {

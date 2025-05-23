@@ -1,66 +1,46 @@
 package database;
 
-import models.Doctor; // Doctor modelini import et
-import models.User; // User importu gerekli (Doctor User'dan kalıtım aldığı için)
-import java.sql.*;
+import models.Doctor;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorDB {
+    public List<Doctor> getDocList() {
+        List<Doctor> docList = new ArrayList<>(); //doctor list
+        //get doctors from user table
+        String userQ = "SELECT u.id, u.username, u.password, u.name, u.surname, u.phoneNumber, u.email, d.specialization " +
+                "FROM users u " +
+                "JOIN doctors d ON u.id = d.id " +
+                "WHERE u.userType = 'doctor'"; //get docs only
 
-    // Tüm doktorları veritabanından çeker
-    // CreateAppointmentController bu metodu kullanarak doktor listesini alır
-    public List<Doctor> getAllDoctors() {
-        List<Doctor> doctors = new ArrayList<>();
-        // Doktor bilgileri hem users hem de doctors tablolarında tutuluyor
-        // İki tabloyu JOIN yaparak veya ayrı ayrı çekip Doctor objeleri oluşturabiliriz.
-        // Ayrı ayrı çekmek daha basit olabilir şimdilik.
+        try (Connection dbCon = Database.connect(); //connect db
+             PreparedStatement userStmt = dbCon.prepareStatement(userQ); //prepare query
+             ResultSet userRes = userStmt.executeQuery()) { //run query get results
+            //read results
+            while (userRes.next()) {
+                int uID = userRes.getInt("id");
+                String username = userRes.getString("username");
+                String psw = userRes.getString("password");
+                String fName = userRes.getString("name");
+                String lName = userRes.getString("surname");
+                String phone = userRes.getString("phoneNumber");
+                String mail = userRes.getString("email");
+                String spec = userRes.getString("specialization");
 
-        // Önce users tablosundan userType='Doctor' olanları çek
-        String userSql = "SELECT id, username, password, name, surname, phoneNumber, email FROM users WHERE userType = 'Doctor'";
-        // Sonra doctors tablosundan uzmanlıklarını çek
-
-        try (Connection conn = Database.connect();
-             PreparedStatement userPstmt = conn.prepareStatement(userSql);
-             ResultSet userRs = userPstmt.executeQuery()) {
-
-            while (userRs.next()) {
-                int userId = userRs.getInt("id");
-                String username = userRs.getString("username");
-                String password = userRs.getString("password"); // Real app: don't load/store passwords like this
-                String name = userRs.getString("name");
-                String surname = userRs.getString("surname");
-                String phoneNumber = userRs.getString("phoneNumber");
-                String email = userRs.getString("email");
-
-                // Her doktor kullanıcısı için doctors tablosundan uzmanlığı çek
-                // Düzeltme: doctors tablosundaki ID kolonu kullanılmalı
-                String doctorSql = "SELECT specialization FROM doctors WHERE id = ?"; // <<<< BURASI DÜZELTİLDİ (doctor_id yerine id)
-                try (Connection innerConn = Database.connect(); // Yeni bir bağlantı kullan
-                     PreparedStatement doctorPstmt = innerConn.prepareStatement(doctorSql)) { // veya dış bağlantıyı kullanabilirsin dikkatli ol
-                    doctorPstmt.setInt(1, userId);
-                    ResultSet doctorRs = doctorPstmt.executeQuery();
-                    if (doctorRs.next()) {
-                        String specialization = doctorRs.getString("specialization");
-                        // Doctor objesi oluştur (User constructor'ı çağrılır)
-                        Doctor doctor = new Doctor(userId, username, password, name, surname, phoneNumber, email, specialization);
-                        doctors.add(doctor);
-                        System.out.println("DEBUG: getAllDoctors - Doktor eklendi: " + name + " " + surname + " (" + specialization + ")"); // DEBUG
-                    }
-                    doctorRs.close(); // İçteki ResultSet'i kapat
-                } catch (SQLException e) {
-                    System.err.println("Doktor uzmanlık bilgisi çekme hatası (ID: " + userId + "): " + e.getMessage());
-                    e.printStackTrace();
-                }
+                //make doctor obj add to list
+                Doctor oneDoc = new Doctor(uID, username, psw, fName, lName, phone, mail, spec);
+                docList.add(oneDoc);
+                System.out.println("DEBUG: getdoclist - doc added " + fName + " " + lName + " (" + spec + ")");
             }
-            System.out.println("DEBUG: getAllDoctors - Toplam " + doctors.size() + " doktor bulundu."); // DEBUG
-
+            System.out.println("DEBUG: getdoclist - total " + docList.size() + " docs found");
         } catch (SQLException e) {
-            System.err.println("Tüm doktorları çekme hatası: " + e.getMessage());
+            System.err.println("ERROR: all docs get error " + e.getMessage());
             e.printStackTrace();
         }
-        return doctors;
+        return docList; //return doctor list
     }
-
-    // Buraya tek bir doktoru ID'ye göre çekme gibi metodlar da eklenebilir
 }

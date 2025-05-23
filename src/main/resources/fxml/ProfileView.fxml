@@ -11,19 +11,19 @@
     <children>
         <VBox styleClass="profile-container" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="460.0" prefWidth="740.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
             <children>
-                <Label fx:id="welcomeProfileLabel" text="Profil Bilgileriniz">
+                <Label fx:id="welcomeProfLbl" text="Profil Bilgileriniz">
                     <font>
                         <Font name="System Bold" size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="usernameLabel" text="TC kimlik no: " />
-                <Label fx:id="nameLabel" text="Ad: " />
-                <Label fx:id="surnameLabel" text="Soyad: " />
-                <Label fx:id="userTypeLabel" text="Kullanıcı Tipi: " />
-                <Label fx:id="phoneNumberLabel" text="Telefon: " />
-                <Label fx:id="emailLabel" text="Email: " />
+                <Label fx:id="userLbl" text="TC kimlik no: " />
+                <Label fx:id="nameLbl" text="Ad: " />
+                <Label fx:id="surnameLbl" text="Soyad: " />
+                <Label fx:id="typeLbl" text="Kullanıcı Tipi: " />
+                <Label fx:id="phoneLbl" text="Telefon: " />
+                <Label fx:id="emailLbl" text="Email: " />
 
-                <Label fx:id="patientDetailsTitleLabel" text="Hasta Bilgileri">
+                <Label fx:id="patDetTitleLbl" text="Hasta Bilgileri">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
@@ -31,10 +31,10 @@
                         <Insets top="15.0" />
                     </VBox.margin>
                 </Label>
-                <Label fx:id="dateOfBirthLabel" text="Doğum Tarihi: " />
-                <Label fx:id="bloodGroupLabel" text="Kan Grubu: " />
+                <Label fx:id="dobLbl" text="Doğum Tarihi: " />
+                <Label fx:id="bloodLbl" text="Kan Grubu: " />
 
-                <Label fx:id="doctorDetailsTitleLabel" text="Doktor Bilgileri">
+                <Label fx:id="docDetTitleLbl" text="Doktor Bilgileri">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
@@ -42,7 +42,7 @@
                         <Insets top="15.0" />
                     </VBox.margin>
                 </Label>
-                <Label fx:id="specializationLabel" text="Uzmanlık: " />
+                <Label fx:id="specLbl" text="Uzmanlık: " />
 
             </children>
         </VBox>

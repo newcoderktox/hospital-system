@@ -1,4 +1,3 @@
-// src/main/java/ui/LoginUIController.java
 package ui;
 
 import database.LoginDB;
@@ -11,96 +10,90 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import models.User;
 import java.io.IOException;
-
 public class LoginController {
 
-    @FXML
-    private TextField usernameField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private Label messageLabel;
 
-    private LoginDB loginDB;
+    @FXML
+    private TextField userField;
+    @FXML
+    private PasswordField pswField;
+    @FXML
+    private Label msgLabel;
+    private LoginDB myLoginDB;
 
+    //run when screen opens
     public void initialize() {
-        loginDB = new LoginDB();
+        myLoginDB = new LoginDB(); //make login db obj
     }
-
     @FXML
-    private void handleLoginButton() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-
-        if (username.isEmpty() || password.isEmpty()) {
-            messageLabel.setText("Kullanıcı adı ve şifre boş bırakılamaz.");
+    private void doLogin() { //
+        String username = userField.getText();
+        String psw = pswField.getText();
+        //check if empty
+        if (username.isEmpty() || psw.isEmpty()) {
+            msgLabel.setText("Kullanıcı adı ve şifre boş bırakılamaz.");
             return;
         }
-        if (!isValidInput(username)) { // 'username' değişkenini validasyon metoduna pass et
-            messageLabel.setText("Hata: Lütfen geçerli bir 11 haneli rakamlardan oluşan TC Kimlik No girin."); // Hata mesajı
-            return; // Validasyon başarısız olursa işlemi durdur
+        //check if valid input (tc no)
+        if (!checkInput(username)) {
+            msgLabel.setText("Lütfen geçerli bir 11 haneli rakamlardan oluşan TC Kimlik No girin.");
+            return;
         }
-
-
-        User loggedInUser = loginDB.authenticateUser(username, password);
-
-        if (loggedInUser != null) {
-            // Giriş başarılı! Ana dashboard'a yönlendir
-            loadMainDashboard(loggedInUser);
+        //try to login
+        User loggedUser = myLoginDB.checkLogin(username, psw); //
+        if (loggedUser != null) {
+            //login ok go to dashboard
+            openDashboard(loggedUser);
         } else {
-            messageLabel.setText("Kullanıcı adı veya şifre yanlış.");
+            msgLabel.setText("Kullanıcı adı veya şifre yanlış.");
         }
     }
-    private boolean isValidInput(String input) {
-        // Girdinin tam olarak 11 karakter uzunluğunda olup olmadığını kontrol et
+    //check if input is valid
+    private boolean checkInput(String input) {
+        //check length
         if (input == null || input.length() != 11) {
             return false;
         }
-        // Girdinin her karakterinin bir rakam olup olmadığını kontrol et
+        //check if all digits
         for (char c : input.toCharArray()) {
             if (!Character.isDigit(c)) {
                 return false;
             }
         }
-        // Temel validasyonlar geçti (Uzunluk 11 ve Sadece Rakamlar)
-        // Daha karmaşık TC Kimlik No validasyonu (checksum hesapları) buraya eklenebilir isteğe bağlı
-        return true;
+        return true; //all good
     }
 
     @FXML
-    private void handleRegisterButton() {
-        // Kayıt olma ekranını yükle
+    private void RegisterScreen() {
+        //open register screen
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/RegisterUI.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setTitle("Hastane Randevu Sistemi - Kayıt");
-            stage.setScene(scene);
-            stage.show();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RegisterUI.fxml"));
+            Scene newScene = new Scene(loader.load());
+            Stage currentStage = (Stage) userField.getScene().getWindow();
+            currentStage.setTitle("Hastane Randevu Sistemi - Kayıt");
+            currentStage.setScene(newScene);
+            currentStage.show();
         } catch (IOException e) {
-            System.err.println("Kayıt ekranı yüklenirken hata oluştu: " + e.getMessage());
+            System.err.println("ERROR: register screen load problem " + e.getMessage());
             e.printStackTrace();
         }
     }
-
-    // Ana dashboard'u yükleyen yardımcı metod
-    private void loadMainDashboard(User user) {
+    //load main dashboard screen
+    private void openDashboard(User user) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/MainDashboard.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setTitle("Hastane Randevu Sistemi - Ana Sayfa");
-            stage.setScene(scene);
-            stage.show();
-
-            // MainDashboardController'a giriş yapan kullanıcıyı aktar
-            MainDashboardController controller = fxmlLoader.getController();
-            if (controller != null) {
-                controller.setUser(user);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainDashboard.fxml"));
+            Scene newScene = new Scene(loader.load());
+            Stage currentStage = (Stage) userField.getScene().getWindow();
+            currentStage.setTitle("Hastane Randevu Sistemi - Ana Sayfa");
+            currentStage.setScene(newScene);
+            currentStage.show();
+            //pass user to dashboard controller
+            MainDashboardController dashController = loader.getController();
+            if (dashController != null) {
+                dashController.setUser(user);
             }
-
         } catch (IOException e) {
-            System.err.println("Ana dashboard yüklenirken hata oluştu: " + e.getMessage());
+            System.err.println("ERROR: main dashb load err " + e.getMessage());
             e.printStackTrace();
         }
     }

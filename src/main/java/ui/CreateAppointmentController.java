@@ -1,268 +1,217 @@
 package ui;
 
 import database.AppointmentDB;
-import database.DoctorDB; // Doktorları getirmek için DoctorDB
+import database.DoctorDB;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import models.Doctor; // Doctor modelini import et
-import models.User; // User modelini import et
-import javafx.event.ActionEvent; // ActionEvent importu
-
+import models.Doctor;
+import models.User;
+import javafx.event.ActionEvent;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class CreateAppointmentController implements Initializable {
+public class CreateAppointmentController implements Initializable { //initializable makes initialize() run when screen loads
+    @FXML
+    private ComboBox<Doctor> docCombo; //doctor select combobox
+    @FXML
+    private DatePicker datePick; //date select picker
+    @FXML
+    private ComboBox<String> timeCombo; //time select combobox
+    @FXML
+    private Button createBtn; //create appt button
+    @FXML
+    private Label loadingMsg; //loading times message
+    @FXML
+    private Label msgLabel; //error or success messages
+    @FXML
+    private Label docMsgLabel; //message for doctors
 
-    @FXML
-    private ComboBox<Doctor> doctorComboBox; // Doktor seçim ComboBox'ı
-    @FXML
-    private DatePicker datePicker; // Tarih seçim DatePicker'ı
-    @FXML
-    private ComboBox<String> timeComboBox; // Saat seçim ComboBox'ı
-    @FXML
-    private Button createAppointmentButton; // Randevu Oluştur butonu
-    @FXML
-    private Label loadingTimeSlotsLabel; // Müsait saatler yükleniyor mesajı
-    @FXML
-    private Label messageLabel; // Hata veya başarı mesajları için
-    @FXML
-    private Label doctorMessageLabel; // Doktorlar için gösterilecek mesaj
+    private User currentLoggedInUser; //logged in user
+    private DoctorDB myDocDB; //doctor db obj
+    private AppointmentDB myApptDB; //appt db obj
 
-    private User loggedInUser; // Giriş yapmış kullanıcı
-    private DoctorDB doctorDB; // Doktor veritabanı işlemleri için
-    private AppointmentDB appointmentDB; // Randevu veritabanı işlemleri için
-
-    // MainDashboardController'dan çağrılacak, giriş yapan kullanıcıyı alacak metod
+    //this method is called from MainDashboardController to set user
     public void setUser(User user) {
-        this.loggedInUser = user;
-        System.out.println("DEBUG: CreateAppointmentController - setUser metodu çağrıldı. Kullanıcı tipi: " + (loggedInUser != null ? loggedInUser.getUserType() : "null")); // DEBUG
-
-        // Kullanıcı tipine göre arayüz elementlerinin görünürlüğünü ayarla
-        adjustVisibilityByUserType();
-
-        // Eğer kullanıcı hastaysa doktor listesini yükle
-        if (loggedInUser != null && "patient".equalsIgnoreCase(loggedInUser.getUserType())) {
-            loadDoctors();
+        this.currentLoggedInUser = user;
+        System.out.println("DEBUG: setuser called user type " + (currentLoggedInUser != null ? currentLoggedInUser.getUserType() : "null"));
+        //adjust UI based on user type
+        fixVisibility(); //
+        //if user is patient load doctor list
+        if (currentLoggedInUser != null && "patient".equalsIgnoreCase(currentLoggedInUser.getUserType())) {
+            getDocsList();
         } else {
-            // Doktor veya Admin ise ComboBox'ları devre dışı bırak/temizle
-            // Bu zaten adjustVisibilityByUserType içinde de yapılıyor, sağlamlık için bırakılabilir.
-            doctorComboBox.setDisable(true);
-            datePicker.setDisable(true);
-            timeComboBox.setDisable(true);
-            createAppointmentButton.setDisable(true);
-            loadingTimeSlotsLabel.setVisible(false); // Doktor ise yükleniyor mesajını gizle
-            messageLabel.setVisible(false); // Doktor ise mesaj labelını gizle
+            //if not patient disable combos
+            docCombo.setDisable(true);
+            datePick.setDisable(true);
+            timeCombo.setDisable(true);
+            createBtn.setDisable(true);
+            loadingMsg.setVisible(false);
+            msgLabel.setVisible(false);
         }
-
     }
-
+    //this method runs when the screen opens
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        doctorDB = new DoctorDB(); // DB instance'larını oluştur
-        appointmentDB = new AppointmentDB();
-
-        // Elementlerin başlangıç durumlarını ayarla
-        timeComboBox.setDisable(true);
-        createAppointmentButton.setDisable(true);
-        loadingTimeSlotsLabel.setVisible(false);
-        messageLabel.setText(""); // Başlangıçta mesaj yok
-
-        // --- Event Handlers ---
-
-        // Doktor seçimi değiştiğinde müsait saatleri yükle
-        doctorComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            // Doktor veya tarih seçilmeden saat ComboBox'ını devre dışı bırak
-            timeComboBox.setDisable(newVal == null || datePicker.getValue() == null);
-            // Doktor veya tarih değiştiğinde saat ComboBox'ını ve buton durumunu güncelle
-            updateTimeSlots();
-            // updateCreateButtonState(); // updateTimeSlots içinde çağrılıyor
+    public void initialize(URL url, ResourceBundle rb) { //init runs first when screen loads
+        myDocDB = new DoctorDB(); //make db objs
+        myApptDB = new AppointmentDB();
+        //set initial states for elements
+        timeCombo.setDisable(true);
+        createBtn.setDisable(true);
+        loadingMsg.setVisible(false);
+        msgLabel.setText(""); //no message at start
+        //doctor selection changed load available times
+        docCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            //disable time combobox if doctor or date not selected
+            timeCombo.setDisable(newVal == null || datePick.getValue() == null);
+            //update time slots and button state
+            fixTimeSlots();
         });
-
-        // Tarih seçimi değiştiğinde müsait saatleri yükle
-        datePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
-            // Doktor veya tarih seçilmeden saat ComboBox'ını devre dışı bırak
-            timeComboBox.setDisable(newVal == null || doctorComboBox.getValue() == null);
-            // Tarih veya doktor değiştiğinde saat ComboBox'ını ve buton durumunu güncelle
-            updateTimeSlots();
-            // updateCreateButtonState(); // updateTimeSlots içinde çağrılıyor
+        //date selection changed load available times
+        datePick.valueProperty().addListener((obs, oldVal, newVal) -> {
+            //disable time combobox if doctor or date not selected
+            timeCombo.setDisable(newVal == null || docCombo.getValue() == null);
+            //update time slots and button state
+            fixTimeSlots();
         });
-
-        // Saat seçimi değiştiğinde buton durumunu güncelle
-        timeComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            updateCreateButtonState();
+        //time selection changed update button state
+        timeCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            fixCreateBtnState();
         });
-
-        // --- Diğer Initialize Ayarları ---
-
-        // DatePicker için geçmiş tarihleri devre dışı bırak
-        datePicker.setDayCellFactory(picker -> new DateCell() {
+        //disable past dates for date picker
+        datePick.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                // Bugünkü veya gelecekteki tarihleri seçilebilir yap
-                setDisable(empty || date.compareTo(LocalDate.now()) < 0);
+                //make today or future dates selectable
+                setDisable(empty || date.isBefore(LocalDate.now()));
             }
         });
-
-        System.out.println("DEBUG: CreateAppointmentController initialize edildi."); // DEBUG
+        System.out.println("DEBUG: create appt controller initialized");
     }
 
-    // Kullanıcı tipine göre arayüz elementlerinin görünürlüğünü ayarlar
-    private void adjustVisibilityByUserType() {
-        // currentUser null olabilir, LoginController'dan setUser çağrılmadan önce initialize çalışabilir.
-        // setUser metodu bu metodu çağırmalı ve currentUser'ı set etmeli.
-        boolean isPatient = (loggedInUser != null && "patient".equalsIgnoreCase(loggedInUser.getUserType()));
-
-        // Hasta ise: Form elementlerini göster, doktor mesajını gizle
-        doctorComboBox.setVisible(isPatient);
-        datePicker.setVisible(isPatient);
-        timeComboBox.setVisible(isPatient);
-        createAppointmentButton.setVisible(isPatient);
-        // loadingTimeSlotsLabel ve messageLabel sadece hasta ise görünür olmalı, visibility'leri adjustVisibilityByUserType dışında da ayarlanıyor
-        // loadingTimeSlotsLabel.setVisible(isPatient ? loadingTimeSlotsLabel.isVisible() : false);
-        // messageLabel.setVisible(isPatient);
-
-        doctorMessageLabel.setVisible(!isPatient); // Doktor veya Admin ise mesajı göster
-
-        // Hasta değilse, ComboBox ve DatePicker'ı devre dışı bırak
-        if (!isPatient) {
-            doctorComboBox.setDisable(true);
-            datePicker.setDisable(true);
-            timeComboBox.setDisable(true);
-            createAppointmentButton.setDisable(true);
+    //adjust visib based on user type
+    private void fixVisibility() {
+        boolean isPat = (currentLoggedInUser != null && "patient".equalsIgnoreCase(currentLoggedInUser.getUserType()));
+        //if patient show form elements hide doctor message
+        docCombo.setVisible(isPat);
+        datePick.setVisible(isPat);
+        timeCombo.setVisible(isPat);
+        createBtn.setVisible(isPat);
+        docMsgLabel.setVisible(!isPat);
+        //if not patient disable combobox and datepicker
+        if (!isPat) {
+            docCombo.setDisable(true);
+            datePick.setDisable(true);
+            timeCombo.setDisable(true);
+            createBtn.setDisable(true);
         } else {
-            // Hasta ise, başlangıçta ComboBox ve DatePicker etkin olmalı (içleri boş olsa da)
-            doctorComboBox.setDisable(false);
-            datePicker.setDisable(false);
+            //if patient enable combobox and datepicker at start
+            docCombo.setDisable(false);
+            datePick.setDisable(false);
         }
     }
-
-
-    // Veritabanından doktor listesini yükler ve ComboBox'a doldurur
-    private void loadDoctors() {
-        // Sadece hasta ise doktorları yükle
-        if (loggedInUser != null && "patient".equalsIgnoreCase(loggedInUser.getUserType())) {
-            List<Doctor> doctors = doctorDB.getAllDoctors(); // <<<< BU ÇAĞRI DoctorDB'de olmalı
-            doctorComboBox.setItems(FXCollections.observableArrayList(doctors));
-            System.out.println("DEBUG: CreateAppointmentController - Doktor listesi yüklendi: " + doctors.size() + " doktor."); // DEBUG
+    //load doctor list from db and fill combobox
+    private void getDocsList() {
+        //only load doctors if user is patient
+        if (currentLoggedInUser != null && "patient".equalsIgnoreCase(currentLoggedInUser.getUserType())) {
+            List<Doctor> allDocs = myDocDB.getDocList();
+            docCombo.setItems(FXCollections.observableArrayList(allDocs));
+            System.out.println("DEBUG: getdocslist  " + allDocs.size() + " docs");
         } else {
-            doctorComboBox.setItems(FXCollections.emptyObservableList()); // Hasta değilse boş liste
-            System.out.println("DEBUG: CreateAppointmentController - Kullanıcı hasta değil, doktor listesi yüklenmedi."); // DEBUG
+            docCombo.setItems(FXCollections.emptyObservableList()); //if not patient empty list
+            System.out.println("DEBUG: getdocslist user not patient no docs loaded");
         }
     }
-
-    // Seçilen doktor ve tarihe göre müsait saatleri yükler ve ComboBox'a doldurur
-    private void updateTimeSlots() {
-        Doctor selectedDoctor = doctorComboBox.getValue();
-        LocalDate selectedDate = datePicker.getValue();
-
-        // Doktor, tarih seçilmeden VEYA kullanıcı hasta değilse saatleri yükleme
-        if (loggedInUser == null || !"patient".equalsIgnoreCase(loggedInUser.getUserType()) || selectedDoctor == null || selectedDate == null) {
-            timeComboBox.setItems(FXCollections.emptyObservableList());
-            timeComboBox.setDisable(true);
-            loadingTimeSlotsLabel.setVisible(false);
-            updateCreateButtonState();
+    //load available times based on selected doctor and date
+    private void fixTimeSlots() {
+        Doctor chosenDoc = docCombo.getValue();
+        LocalDate chosenDate = datePick.getValue();
+        //dont load times if no doctor date or user not patient
+        if (currentLoggedInUser == null || !"patient".equalsIgnoreCase(currentLoggedInUser.getUserType()) || chosenDoc == null || chosenDate == null) {
+            timeCombo.setItems(FXCollections.emptyObservableList());
+            timeCombo.setDisable(true);
+            loadingMsg.setVisible(false);
+            fixCreateBtnState();
             return;
         }
-
-        loadingTimeSlotsLabel.setVisible(true); // Yükleniyor mesajını göster
-        timeComboBox.setDisable(true); // Saat seçimini devre dışı bırak
-        timeComboBox.setItems(FXCollections.emptyObservableList()); // Eski saatleri temizle
-        messageLabel.setText(""); // Eski mesajı temizle
-        messageLabel.setTextFill(javafx.scene.paint.Color.BLACK); // Mesaj rengini varsayılana çevir
-
-        // Tarihi veritabanı formatına dönüştür (YYYY-MM-DD)
-        String dateString = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        // Arka planda müsait saatleri çek (AppointmentDB içinde olmalı)
-        // UI thread'ini bloke etmemek için ayrı bir Task içinde yapmak daha iyidir,
-        // ancak basitlik için şimdilik ana UI thread'inde yapalım
-        List<String> availableTimes = appointmentDB.getAvailableTimeSlots(selectedDoctor.getId(), dateString); // <<<< BU ÇAĞRI AppointmentDB'de olmalı
-
-        timeComboBox.setItems(FXCollections.observableArrayList(availableTimes));
-        timeComboBox.setDisable(false); // Saat seçimini tekrar etkinleştir
-        loadingTimeSlotsLabel.setVisible(false); // Yükleniyor mesajını gizle
-        System.out.println("DEBUG: CreateAppointmentController - Müsait saatler yüklendi: " + availableTimes.size() + " saat."); // DEBUG
-
-        updateCreateButtonState(); // Saatler yüklendikten sonra buton durumunu güncelle
-
-    }
-
-    // Randevu oluştur butonunun durumunu kontrol eder (Doktor, Tarih, Saat seçili mi ve kullanıcı hasta mı?)
-    private void updateCreateButtonState() {
-        boolean isDoctorSelected = doctorComboBox.getValue() != null;
-        boolean isDateSelected = datePicker.getValue() != null;
-        boolean isTimeSelected = timeComboBox.getValue() != null;
-        boolean isUserPatient = (loggedInUser != null && "patient".equalsIgnoreCase(loggedInUser.getUserType())); // Sadece hasta oluşturabilir
-
-        // Buton, sadece hasta ise ve doktor, tarih ve saat seçiliyse etkin olur
-        boolean enableButton = isUserPatient && isDoctorSelected && isDateSelected && isTimeSelected;
-
-        createAppointmentButton.setDisable(!enableButton); // Duruma göre butonu etkinleştir/devre dışı bırak
-
-        System.out.println("DEBUG: updateCreateButtonState çalıştı. Se\u00E7imler durumu: Doctor=" + isDoctorSelected + ", Date=" + isDateSelected + ", Time=" + isTimeSelected + ", UserIsPatient=" + isUserPatient + ". Buton disabled: " + !enableButton); // DEBUG
+        loadingMsg.setVisible(true); //show load message
+        timeCombo.setDisable(true); //disable time selec
+        timeCombo.setItems(FXCollections.emptyObservableList()); //clear old times
+        msgLabel.setText(""); //clear old mes
+        msgLabel.setTextFill(javafx.scene.paint.Color.BLACK); //set message color to default
+        //convert date to db format
+        String dateString = chosenDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        //get available times from appt db
+        List<String> availableTimes = myApptDB.getAvailableTimeSlots(chosenDoc.getId(), dateString);
+        timeCombo.setItems(FXCollections.observableArrayList(availableTimes));
+        timeCombo.setDisable(false); //enable time selec again
+        loadingMsg.setVisible(false); //hide loading message
+        System.out.println("DEBUG: fixtimeslot available times loaded " + availableTimes.size() + " times");
+        fixCreateBtnState(); //update button state after times loaded
     }
 
 
-    // Randevu Oluştur butonuna tıklandığında çalışır
-    // Bu metodun signature'ı FXML'deki onAction="#handleCreateAppointment" ile eşleşmeli
+    //check create appt button state
+    private void fixCreateBtnState() {
+        boolean isDocSel = docCombo.getValue() != null;
+        boolean isDateSel = datePick.getValue() != null;
+        boolean isTimeSel = timeCombo.getValue() != null;
+        boolean isUserPat = (currentLoggedInUser != null && "patient".equalsIgnoreCase(currentLoggedInUser.getUserType())); //only patient can create
+        //button enabled only if user is patient and doctor date time selected
+        boolean enableBtn = isUserPat && isDocSel && isDateSel && isTimeSel;
+        createBtn.setDisable(!enableBtn); //enable/disable button based on state
+        System.out.println("DEBUG: fixcreatebtnstate doc=" + isDocSel + ", date=" + isDateSel + ", time=" + isTimeSel + ", UserIsPat=" + isUserPat + ". button disabled: " + !enableBtn);
+    }
+
+
+    //runs when create appt button clicked
+    //this method's name must match FXML onAction
     @FXML
-    private void handleCreateAppointment(ActionEvent event) {
-        System.out.println("DEBUG: Randevu Oluştur butonuna tıklandı."); // DEBUG
-        // Seçilen doktor, tarih ve saati al
-        Doctor selectedDoctor = doctorComboBox.getValue();
-        LocalDate selectedDate = datePicker.getValue();
-        String selectedTime = timeComboBox.getValue(); // Assuming time is a String, ensure it's not null
+    private void createAppointment(ActionEvent event) {
+        System.out.println("DEBUG: create appt button clicked");
+        //get selected doctor date and time
+        Doctor chosenDoc = docCombo.getValue();
+        LocalDate chosenDate = datePick.getValue();
+        String chosenTime = timeCombo.getValue();
 
-        // Seçimlerin null olmadığını tekrar kontrol et (UI disabled olsa da backend kontrolü)
-        if (loggedInUser == null || !"patient".equalsIgnoreCase(loggedInUser.getUserType()) || selectedDoctor == null || selectedDate == null || selectedTime == null || selectedTime.isEmpty()) {
-            messageLabel.setText("Randevu oluşturulamadı: Lütfen tüm bilgileri seçin veya kullanıcı hasta değil.");
-            messageLabel.setTextFill(javafx.scene.paint.Color.RED); // Kırmızı hata mesajı
-            System.err.println("HATA: Randevu Oluştur - Gerekli bilgiler seçilmemiş veya kullanıcı hasta değil."); // HATA
+        //check if selections are null again
+        if (currentLoggedInUser == null || !"patient".equalsIgnoreCase(currentLoggedInUser.getUserType()) || chosenDoc == null || chosenDate == null || chosenTime == null || chosenTime.isEmpty()) {
+            msgLabel.setText("Randevu oluşturulamadı: Lütfen tüm bilgileri seçin veya kullanıcı hasta değil.");
+            msgLabel.setTextFill(javafx.scene.paint.Color.RED); //red error message
+            System.err.println("ERROR: create appt ");
             return;
         }
-
-        // Tarihi veritabanı formatına dönüştür (YYYY-MM-DD)
-        String dateString = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        // Randevu oluşturmayı dene (AppointmentDB içinde olmalı)
-        boolean success = appointmentDB.createAppointment(loggedInUser.getId(), selectedDoctor.getId(), dateString, selectedTime); // <<<< BU ÇAĞRI AppointmentDB'de olmalı
-
+        //convert date to db format (yyyy-mm-ddd)
+        String dateString = chosenDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        //try to create appt
+        boolean success = myApptDB.createAppointment(currentLoggedInUser.getId(), chosenDoc.getId(), dateString, chosenTime);
         if (success) {
-            messageLabel.setText("Randevu başarıyla oluşturuldu!");
-            messageLabel.setTextFill(javafx.scene.paint.Color.GREEN); // Yeşil başarı mesajı
-            System.out.println("DEBUG: Randevu başarıyla oluşturuldu."); // DEBUG
-
-            // Randevu oluşturulduktan sonra alanları temizle/sıfırla
-            doctorComboBox.getSelectionModel().clearSelection();
-            datePicker.setValue(null);
-            timeComboBox.setItems(FXCollections.emptyObservableList());
-            timeComboBox.setDisable(true);
-            updateCreateButtonState(); // Butonu devre dışı bırak
-            loadingTimeSlotsLabel.setVisible(false);
-
-            // Randevularım sekmesini otomatik yenileme:
-            // Bunun için MainDashboardController üzerinden MyAppointmentsController'a bir callback veya event mekanizması gerekebilir.
-            // Şimdilik manuel olarak Randevularım sekmesine gidip Yenile butonuna basılması beklenebilir.
-
+            msgLabel.setText("Randevu başarıyla oluşturuldu!");
+            msgLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+            System.out.println("DEBUG: appt created ok");
+            //clear fields after appt created
+            docCombo.getSelectionModel().clearSelection();
+            datePick.setValue(null);
+            timeCombo.setItems(FXCollections.emptyObservableList());
+            timeCombo.setDisable(true);
+            fixCreateBtnState(); //disable button
+            loadingMsg.setVisible(false); //auto refresh
         } else {
-            messageLabel.setText("Randevu oluşturulurken bir hata oluştu.");
-            messageLabel.setTextFill(javafx.scene.paint.Color.RED); // Kırmızı hata mesajı
-            System.err.println("HATA: Randevu oluşturulurken DB hatası veya başka bir sorun oluştu."); // HATA
-            // Hata durumunda da alanları temizleyebiliriz
-            doctorComboBox.getSelectionModel().clearSelection();
-            datePicker.setValue(null);
-            timeComboBox.setItems(FXCollections.emptyObservableList());
-            timeComboBox.setDisable(true);
-            updateCreateButtonState(); // Butonu devre dışı bırak
-            loadingTimeSlotsLabel.setVisible(false);
+            msgLabel.setText("Randevu oluşturulurken bir hata oluştu.");
+            msgLabel.setTextFill(javafx.scene.paint.Color.RED);
+            System.err.println("ERROR: appt creation db error or other idk");
+            //clear fields on error too
+            docCombo.getSelectionModel().clearSelection();
+            datePick.setValue(null);
+            timeCombo.setItems(FXCollections.emptyObservableList());
+            timeCombo.setDisable(true);
+            fixCreateBtnState(); //disable btn
+            loadingMsg.setVisible(false);
         }
     }
-
-    // **Finalize metodu kaldırıldı.** <<<< BURASI SİLİNDİ
 }
